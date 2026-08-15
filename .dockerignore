@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.db
+.env
+.git/
+scripts/
+data/cohort.json

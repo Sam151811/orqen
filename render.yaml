@@ -1,0 +1,75 @@
+# Render blueprint. Native Python runtime rather than Docker: the free tier
+# allows 500 build minutes a month and a Docker build burns them for no benefit
+# here - there is no system dependency beyond libpq, which psycopg[binary] ships.
+services:
+  - type: web
+    name: orqen
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: >
+      uvicorn orqen.api:app --host 0.0.0.0 --port $PORT
+      --workers 1 --timeout-keep-alive 65
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Postgres is wired automatically. Passports must outlive the ephemeral
+      # filesystem, so DATABASE_URL is not optional in this environment.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: orqen-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: ORQEN_PROVIDER
+        value: openai_compatible
+      - key: ORQEN_BASE_URL
+        sync: false          # set in the dashboard
+      - key: ORQEN_API_KEY
+        sync: false
+      # sync:false so the dashboard is authoritative. Hardcoding a value here
+      # silently overrode a dashboard setting and pointed embeddings at
+      # api.openai.com with no key, which killed two probe families.
+      - key: ORQEN_EMBED_PROVIDER
+        sync: false
+      - key: ORQEN_EMBED_BASE_URL
+        sync: false
+      - key: ORQEN_EMBED_API_KEY
+        sync: false
+      - key: ORQEN_EMBED_MODEL
+        sync: false
+      - key: ORQEN_MODEL_ALIASES
+        sync: false
+      # 0.1 CPU: keep the fan-out modest and the per-run ceiling low so one
+      # request cannot monopolise the instance.
+      - key: ORQEN_MAX_CONCURRENCY
+        value: "4"
+      - key: ORQEN_MAX_CALLS
+        value: "120"
+      - key: ORQEN_CALL_TIMEOUT
+        value: "25"
+      - key: ORQEN_WARM_MODELS
+        sync: false
+      # 1 on the free tier: replicates triple gateway spend, and the warm-boot
+      # audit runs at startup. Raise locally for numbers you intend to quote.
+      - key: ORQEN_REPEATS
+        value: "1"
+      - key: ORQEN_AUDIT_LIMIT
+        value: "6"
+      - key: ORQEN_GLOBAL_AUDIT_LIMIT
+        value: "60"
+      # Generate once with `python -m orqen.attest` and set it here. Without it
+      # the instance signs with a key generated at start-up, which does not
+      # survive a restart - the passport says so rather than implying otherwise.
+      - key: ORQEN_SIGNING_KEY
+        sync: false
+
+databases:
+  - name: orqen-db
+    plan: free
+    databaseName: orqen
+    user: orqen
+    # NOTE: Render's free Postgres expires 30 days after creation. Fine for a
+    # hackathon and the judging window; not a production posture. Recorded here
+    # rather than discovered later.

@@ -1,0 +1,26 @@
+# Render free web services spin down after 15 minutes of inactivity and take
+# 30-60 seconds to wake. A judge clicking a passport link and waiting a minute
+# on a blank page is the single most likely way this project loses points, so
+# the service is pinged every 14 minutes.
+#
+# This is a workaround, not a supported feature, and it is in the repo rather
+# than hidden in a third-party dashboard so it is visible to anyone reviewing.
+name: keep-alive
+on:
+  schedule:
+    - cron: "*/14 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 \
+              "${{ vars.ORQEN_URL }}/health") && [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          echo "service did not return 200 after 3 attempts"
+          exit 1
