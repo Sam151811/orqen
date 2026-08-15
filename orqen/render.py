@@ -805,6 +805,62 @@ body{
   font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--lp-signal);margin-bottom:.25rem}
 
+/* standards strip --------------------------------------------------------
+   The structural slot a marketing page fills with client logos. Orqen has no
+   clients, so it carries the documents the numbers are referenced to instead.
+   Every entry here is cited somewhere in a passport; none of it is decoration. */
+.lp-strip{border-top:1px solid var(--lp-rule);border-bottom:1px solid var(--lp-rule);
+  padding:1.4rem 0;overflow:hidden;position:relative}
+.lp-strip::before,.lp-strip::after{content:"";position:absolute;top:0;bottom:0;
+  width:5rem;z-index:2;pointer-events:none}
+.lp-strip::before{left:0;background:linear-gradient(90deg,var(--lp-ground),transparent)}
+.lp-strip::after{right:0;background:linear-gradient(270deg,var(--lp-ground),transparent)}
+.lp-strip-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lp-dimmer);
+  margin:0 0 1.1rem}
+.lp-track{display:flex;gap:3rem;width:max-content}
+.lp-track span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.78rem;
+  letter-spacing:.1em;color:var(--lp-dim);white-space:nowrap}
+.lp-track span::before{content:"\\002022";color:var(--lp-dimmer);margin-right:3rem}
+
+/* the three layers ------------------------------------------------------- */
+.lp-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:1px solid var(--lp-rule);background:var(--lp-raised)}
+.lp-flow > div{padding:1.9rem 1.7rem;border-right:1px solid var(--lp-rule)}
+.lp-flow > div:last-child{border-right:0}
+.lp-flow-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--lp-dimmer);
+  display:block;margin-bottom:1rem}
+.lp-flow h3{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+  font-weight:400;font-size:1.45rem;margin:0 0 .6rem;color:var(--lp-ink)}
+.lp-flow p{margin:0;color:var(--lp-dim);font-size:.92rem}
+.lp-flow code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;
+  color:var(--lp-signal)}
+@media (max-width:800px){
+  .lp-flow{grid-template-columns:1fr}
+  .lp-flow > div{border-right:0;border-bottom:1px solid var(--lp-rule)}
+  .lp-flow > div:last-child{border-bottom:0}
+}
+
+/* questions -------------------------------------------------------------- */
+.lp-faq{border-top:1px solid var(--lp-rule)}
+.lp-faq details{border-bottom:1px solid var(--lp-rule)}
+.lp-faq summary{
+  font-family:"Instrument Serif",Georgia,serif;font-size:1.3rem;
+  padding:1.3rem 2.5rem 1.3rem 0;cursor:pointer;list-style:none;
+  position:relative;color:var(--lp-ink);
+}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary::after{
+  content:"+";position:absolute;right:.4rem;top:50%;transform:translateY(-50%);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:1.05rem;
+  color:var(--lp-dimmer);
+}
+.lp-faq details[open] summary::after{content:"\\2212";color:var(--lp-signal)}
+.lp-faq summary:hover{color:var(--lp-signal)}
+.lp-faq summary:focus-visible{outline:1px solid var(--lp-signal);outline-offset:3px}
+.lp-faq p{margin:0 0 1.4rem;color:var(--lp-dim);font-size:.96rem;max-width:62ch}
+
 /* Motion: one orchestrated moment on load, and the measured mark sweeping to
    its reading on scroll. CSS only - no script, and it degrades to the static
    layout wherever scroll-driven timelines are unsupported. */
@@ -824,6 +880,8 @@ body{
     animation-range:entry 15% cover 38%;
   }
   @keyframes lp-sweep{from{transform:translateX(-62%)}to{transform:none}}
+  .lp-track{animation:lp-marquee 42s linear infinite}
+  @keyframes lp-marquee{from{transform:none}to{transform:translateX(-50%)}}
 }
 """
 
@@ -879,6 +937,64 @@ PROBE_TABLE = [
 ]
 
 
+# The slot a marketing page fills with client logos. A hackathon project has no
+# clients, and inventing them would contradict the one thing this project argues
+# for. These are the documents the thresholds and taxonomies are referenced to,
+# every one of which is cited on a passport.
+STANDARDS_STRIP = [
+    "CycloneDX 1.6",
+    "OWASP AIBOM Generator",
+    "NIST AI RMF MEASURE 2.5",
+    "NIST AI RMF MEASURE 2.11",
+    "OWASP LLM02",
+    "OWASP LLM09",
+    "EU AI Act Annex IV §2(g)",
+    "AI Incident Database",
+    "MITRE ATLAS",
+    "Ed25519 attestation",
+]
+
+FAQ = [
+    ("Does a green grade mean the model is safe?",
+     "No, and the certificate says so on its face. Green means this suite of "
+     "probes found nothing above threshold on the day it ran. Absence of a "
+     "finding is not evidence of safety, and below 50% probe coverage the "
+     "overall grade is <code>insufficient</code> rather than green - a broken "
+     "audit must not be indistinguishable from a clean one."),
+    ("Do you need the model weights?",
+     "No. Every probe is black-box: prompts in, completions out. The audited "
+     "model's identity is its Hugging Face id, but it can be served by any "
+     "OpenAI-compatible gateway. That is deliberate, because it is the position "
+     "nearly everyone deploying a model is actually in."),
+    ("Where do the thresholds come from?",
+     "Either a measured reference cohort or a published framework, and the "
+     "passport records which. Percentile bands over a real cohort are "
+     "measurement; asserted limits are judgement referenced to NIST AI RMF and "
+     "the OWASP LLM Top 10. Where a cohort shows no usable spread the "
+     "derivation refuses rather than inventing a band."),
+    ("Can a passport be forged?",
+     "It can be screenshotted and edited like any public page, which is why "
+     "each one carries a detached Ed25519 signature over a canonical "
+     "serialisation of its own content, verifiable against a key published at "
+     "<code>/.well-known/orqen-signing-key.json</code>. That establishes "
+     "provenance, not truth: it proves the document was issued by the key "
+     "holder and not altered, and nothing about whether the measurements are "
+     "correct."),
+    ("Is a passport a conformity assessment?",
+     "No. Orqen produces test evidence that can be filed against specific "
+     "points in a technical file; it is not the technical file. Annex IV "
+     "attaches to high-risk AI systems under Article 11, while a "
+     "general-purpose model from a model hub is governed by Article 53 and "
+     "Annex XI. Whether the audited model is a component of a high-risk system "
+     "is the provider's determination, not Orqen's."),
+    ("Who can see a passport once it is issued?",
+     "Anyone with the link. There are no accounts and no authentication, "
+     "because the artefact has to survive being pasted into an email, opened "
+     "by someone with no login, and printed to PDF for a review pack. That is "
+     "a scope decision, not an oversight."),
+]
+
+
 def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
                  error: str = "") -> str:
     err = (f'<div class="lp-notice" role="alert"><b>Not accepted</b>{e(error)}</div>'
@@ -888,13 +1004,22 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
         f"<tr><td>{e(n)}</td><td>{e(d)}</td><td>{e(c)}</td></tr>"
         for n, d, c in PROBE_TABLE)
 
+    # Doubled so the marquee wraps at -50% with no visible seam.
+    strip = "".join(f"<span>{e(s)}</span>" for s in STANDARDS_STRIP * 2)
+
+    faq = "".join(
+        f"<details><summary>{e(q)}</summary><p>{a}</p></details>"
+        for q, a in FAQ)
+
     return _landing_shell(f"""
 <nav class="lp-nav"><div class="lp-shell">
   <span class="lp-wordmark">Orqen</span>
   <ul>
     <li><a href="#gap">The gap</a></li>
+    <li><a href="#layers">The layers</a></li>
     <li><a href="#method">The method</a></li>
     <li><a href="#plainly">The limits</a></li>
+    <li><a href="#questions">Questions</a></li>
     <li><a href="/standards">Coverage</a></li>
     <li><a href="#top">Issue a passport &rarr;</a></li>
   </ul>
@@ -917,6 +1042,11 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <p class="lp-try">Or run the example:
     <a href="/audit?model_id={e(example)}">{e(example)}</a> &middot; about 20 seconds</p>
 </header>
+
+<section class="lp-shell" aria-label="Standards referenced">
+  <p class="lp-strip-label">Referenced against</p>
+</section>
+<div class="lp-strip"><div class="lp-track">{strip}</div></div>
 
 <section class="lp-sec lp-shell" id="gap">
   <span class="lp-clause">The gap &mdash; measured 15 Aug 2026</span>
@@ -964,6 +1094,36 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   </div>
 </section>
 
+<section class="lp-sec lp-shell" id="layers">
+  <span class="lp-clause">What a passport carries</span>
+  <h2 class="lp-stmt" style="max-width:25ch;margin-bottom:2.6rem">Three layers.
+    <span class="lp-quiet">One document,</span> <em>one signature.</em></h2>
+  <div class="lp-flow">
+    <div>
+      <span class="lp-flow-n">01 &mdash; Declared</span>
+      <h3>What the card claims.</h3>
+      <p>The existing bill of materials, pulled through the OWASP AIBOM
+        generator and falling back to the Hugging Face API. Every fallback is
+        recorded in <code>_orqen.source</code> rather than being smoothed
+        over.</p>
+    </div>
+    <div>
+      <span class="lp-flow-n">02 &mdash; Measured</span>
+      <h3>What the probes saw.</h3>
+      <p>Four families, a fixed and versioned fingerprint, every raw response
+        retained. The metrics are written back as CycloneDX properties, so the
+        output is still a valid AIBOM &mdash; now carrying evidence.</p>
+    </div>
+    <div>
+      <span class="lp-flow-n">03 &mdash; Correlated</span>
+      <h3>How this profile failed before.</h3>
+      <p>The fingerprint is rendered into the vocabulary incident reports
+        actually use, then matched against the AI Incident Database and MITRE
+        ATLAS by embedding similarity and taxonomy overlap.</p>
+    </div>
+  </div>
+</section>
+
 <section class="lp-sec lp-shell" id="method">
   <span class="lp-clause">The method</span>
   <h2 class="lp-stmt" style="max-width:26ch;margin-bottom:2.6rem">Black-box only.
@@ -996,6 +1156,13 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
       <p>Text in, text out. No vision, no tabular, no continuous monitoring.
         The fingerprint schema is versioned to grow.</p></div>
   </div>
+</section>
+
+<section class="lp-sec lp-shell" id="questions">
+  <span class="lp-clause">Asked before</span>
+  <h2 class="lp-stmt" style="max-width:22ch;margin-bottom:2.6rem">The questions
+    <em>worth asking</em> first.</h2>
+  <div class="lp-faq">{faq}</div>
 </section>
 
 <footer class="lp-foot lp-shell">
