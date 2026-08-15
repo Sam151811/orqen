@@ -627,333 +627,321 @@ LANDING_FONTS = (
     '<link rel="preconnect" href="https://fonts.googleapis.com">'
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
     '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-    'family=Inter+Tight:wght@400;500;600&'
+    'family=Inter:wght@400;500&'
+    'family=Instrument+Serif:ital@0;1&'
     'family=IBM+Plex+Mono:wght@400;500&display=swap">'
 )
 
 LANDING_CSS = """
+/* Palette, type scale and spacing lifted from the reference export: an
+   off-white ground, black text, grey rules, and no accent colour in the
+   chrome at all. The one colour that appears is amber, and it is reserved
+   for a measured reading - the same rule the passport follows. */
 :root{
-  --bg:#08090B;
-  --panel:#0D0F13;
-  --panel2:#111419;
-  --line:#1A1D24;
-  --line2:#252A33;
-  --ink:#EDEFF2;
-  --dim:#868D99;
-  --dimmer:#4E5561;
-  --signal:#F0A93B;
-  --shell:78rem;
+  --bg:#F5F5F5;
+  --panel:#FFFFFF;
+  --panel2:#F7F7F7;
+  --ink:#000000;
+  --ink2:#333333;
+  --dim:#545454;
+  --dimmer:#636363;
+  --line:#DEDEDE;
+  --line2:#D1D1D1;
+  --rule:#BDBDBD;
+  --signal:#B45309;
+  --signal-soft:#B4530922;
+  --shell:1180px;
+  --col:780px;
+  --r:18px;
+  --r-sm:10px;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Inter Tight",system-ui,sans-serif;font-size:16px;line-height:1.55;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.6em;
+  font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
+::selection{background:#5b9cfc33;color:#000}
 a{color:inherit}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
-.shell{max-width:var(--shell);margin:0 auto;padding:0 1.5rem;width:100%}
+.shell{max-width:var(--shell);margin:0 auto;padding:0 24px;width:100%}
 
 /* type ------------------------------------------------------------------- */
-h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;line-height:1.03}
-.h-xl{font-size:clamp(2.6rem,7vw,5.4rem)}
-.h-lg{font-size:clamp(2rem,4.6vw,3.4rem)}
-.h-md{font-size:clamp(1.5rem,2.8vw,2.1rem)}
+h1,h2,h3{margin:0;font-weight:500;line-height:1.2em;letter-spacing:-.02em}
+.h-xl{font-size:clamp(38px,5.6vw,54px)}
+.h-lg{font-size:clamp(32px,4vw,44px)}
+.h-md{font-size:clamp(24px,2.6vw,32px)}
+/* Instrument Serif italic is the reference's one expressive move: a phrase
+   inside an otherwise neutral heading, set in serif italic. */
+.ser{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+  font-weight:400;letter-spacing:0}
 .eyebrow{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin:0 0 1.2rem;
-  display:flex;align-items:center;gap:.7rem;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  letter-spacing:.01em;color:var(--dim);margin:0 0 20px;line-height:1.4em;
+  display:flex;align-items:center;gap:10px;
 }
-.eyebrow::before{content:"";width:1.6rem;height:1px;background:var(--line2)}
-.lede{color:var(--dim);font-size:1.05rem;max-width:48ch;margin:1.4rem 0 0}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--rule)}
+.lede{color:var(--dim);font-size:16px;line-height:1.6em;max-width:600px;margin:20px 0 0}
 .lede strong{color:var(--ink);font-weight:500}
 
 /* nav -------------------------------------------------------------------- */
-.nav{position:sticky;top:0;z-index:40;background:rgba(8,9,11,.78);
+.nav{position:sticky;top:0;z-index:40;background:rgba(245,245,245,.85);
   backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
 .nav .shell{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-  height:3.6rem;gap:1rem}
-.nav-l,.nav-r{display:flex;gap:1.6rem;align-items:center}
+  height:64px;gap:20px}
+.nav-l,.nav-r{display:flex;gap:24px;align-items:center}
 .nav-r{justify-content:flex-end}
-.nav a{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;
-  letter-spacing:.1em;color:var(--dim);text-decoration:none;
-  display:inline-flex;align-items:center;gap:.45rem;
-}
-.nav a::after{content:"[ ]";color:var(--dimmer);transition:color .2s,transform .2s}
+.nav a{font-size:14px;color:var(--ink2);text-decoration:none;
+  display:inline-flex;align-items:center;gap:6px;letter-spacing:.01em}
+.nav a::after{content:"[ ]";color:var(--rule);font-family:"IBM Plex Mono",monospace;
+  font-size:12px;transition:color .2s,transform .2s}
 .nav a:hover{color:var(--ink)}
-.nav a:hover::after{color:var(--signal);transform:translateX(2px)}
-.mark{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.82rem;
-  letter-spacing:.26em;text-transform:uppercase;color:var(--ink);
-  text-decoration:none;white-space:nowrap;
-}
-.mark span{color:var(--signal)}
+.nav a:hover::after{color:var(--ink);transform:translateX(2px)}
+.mark{font-size:16px;font-weight:500;letter-spacing:-.02em;color:var(--ink);
+  text-decoration:none;white-space:nowrap}
+.mark span{font-family:"IBM Plex Mono",monospace;color:var(--dimmer)}
 @media (max-width:880px){
   .nav .shell{grid-template-columns:auto 1fr}
-  .nav-l{display:none}.nav-r{gap:1rem}
+  .nav-l{display:none}.nav-r{gap:16px}
   .nav-r a:not(:last-child){display:none}
 }
 
 /* hero ------------------------------------------------------------------- */
-.hero{position:relative;padding:7rem 0 5rem;overflow:hidden}
+.hero{position:relative;padding:140px 0 100px;overflow:hidden}
 .hero-grid{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),
                    linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:74px 74px;
-  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 75%);
-  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 75%);
-  opacity:.6;
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 78% 62% at 50% 0%,#000 18%,transparent 74%);
+  -webkit-mask-image:radial-gradient(ellipse 78% 62% at 50% 0%,#000 18%,transparent 74%);
+  opacity:.85;
 }
 .hero .shell{position:relative;z-index:1}
-.hero h1{max-width:16ch}
-.hero h1 em{font-style:normal;color:var(--dimmer)}
-.cta-row{display:flex;gap:.7rem;flex-wrap:wrap;margin:2.4rem 0 0}
+.hero h1{max-width:15ch}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:30px 0 0}
 .btn{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;
-  letter-spacing:.1em;text-transform:uppercase;padding:.9rem 1.5rem;
+  font-size:14px;letter-spacing:.01em;padding:14px 24px;border-radius:var(--r-sm);
   border:1px solid var(--line2);color:var(--ink);text-decoration:none;
-  display:inline-flex;align-items:center;gap:.6rem;cursor:pointer;
-  background:transparent;transition:border-color .2s,color .2s,background .2s;
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  background:var(--panel);font-family:Inter,system-ui,sans-serif;font-weight:500;
+  transition:border-color .2s,background .2s,color .2s;
 }
-.btn:hover{border-color:var(--signal);color:var(--signal)}
-.btn-fill{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.btn-fill:hover{background:var(--signal);border-color:var(--signal);color:var(--bg)}
-.btn:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.btn:hover{border-color:var(--ink);background:var(--panel2)}
+.btn-fill{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn-fill:hover{background:var(--ink2);border-color:var(--ink2);color:#fff}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
-/* hero instrument panel (replaces the template's video) ------------------- */
-.instrument{
-  margin:3.4rem 0 0;border:1px solid var(--line);background:var(--panel);
-  padding:1.4rem 1.5rem;position:relative;
-}
-.instrument-head{display:flex;justify-content:space-between;gap:1rem;
-  flex-wrap:wrap;margin-bottom:1.1rem}
+/* hero instrument panel -------------------------------------------------- */
+.instrument{margin:50px 0 0;border:1px solid var(--line);background:var(--panel);
+  border-radius:var(--r);padding:24px 28px;position:relative}
+.instrument-head{display:flex;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;margin-bottom:20px}
 .instrument-head span{font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+  font-size:13px;color:var(--dimmer);letter-spacing:.01em}
 .instrument-head b{color:var(--signal);font-weight:500}
-.trace{width:100%;height:96px;display:block}
-.trace .grid{stroke:var(--line);stroke-width:.5}
+.trace{width:100%;height:110px;display:block}
+.trace .grid{stroke:#EBEBEB;stroke-width:1}
 .trace .base{stroke:var(--line2);stroke-width:1}
 .trace .sig{fill:none;stroke:var(--signal);stroke-width:1.6;
   stroke-linecap:round;stroke-linejoin:round}
-.trace .lim{stroke:var(--dimmer);stroke-width:1;stroke-dasharray:3 3}
+.trace .lim{stroke:var(--rule);stroke-width:1;stroke-dasharray:4 4}
 .trace text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:6px;
   fill:var(--dimmer)}
 
 /* form ------------------------------------------------------------------- */
-.form{display:flex;gap:.6rem;flex-wrap:wrap;max-width:40rem;margin:2rem 0 0}
+.form{display:flex;gap:10px;flex-wrap:wrap;max-width:600px;margin:28px 0 0}
 .form label{flex:1 0 100%;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--dim);margin-bottom:.6rem}
+  font-size:13px;color:var(--dim);margin-bottom:10px;letter-spacing:.01em}
 .form input{
-  flex:1 1 18rem;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.92rem;padding:.9rem 1rem;color:var(--ink);background:var(--panel);
-  border:1px solid var(--line2);border-radius:0;
+  flex:1 1 280px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
+  padding:14px 16px;color:var(--ink);background:var(--panel);
+  border:1px solid var(--line2);border-radius:var(--r-sm);
 }
-.form input::placeholder{color:var(--dimmer)}
-.form input:focus-visible{outline:none;border-color:var(--signal)}
-.hint{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;
-  color:var(--dim);margin:1rem 0 0}
+.form input::placeholder{color:var(--rule)}
+.form input:focus-visible{outline:none;border-color:var(--ink)}
+.hint{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dim);margin:16px 0 0}
 .hint a{color:var(--ink);text-underline-offset:3px}
-.hint a:hover{color:var(--signal)}
-.notice{border-left:2px solid var(--signal);background:var(--panel);
-  padding:.9rem 1.1rem;margin:1.8rem 0 0;max-width:40rem;font-size:.92rem}
+.notice{border:1px solid var(--line2);border-left:3px solid var(--signal);
+  background:var(--panel);border-radius:var(--r-sm);padding:14px 16px;
+  margin:24px 0 0;max-width:600px;font-size:14px}
 .notice b{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--signal);margin-bottom:.3rem}
+  font-size:13px;color:var(--signal);margin-bottom:4px}
 
-/* ticker (the template's logo wall) --------------------------------------- */
+/* ticker ----------------------------------------------------------------- */
 .ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  padding:1.5rem 0;overflow:hidden;position:relative}
+  padding:24px 0;overflow:hidden;position:relative;background:var(--panel)}
 .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;
-  width:6rem;z-index:2;pointer-events:none}
-.ticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
-.ticker::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
-.ticker-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.64rem;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--dimmer);
-  margin:0 0 1.3rem;text-align:center}
-.track{display:flex;gap:3.2rem;width:max-content}
-.track span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.8rem;
-  letter-spacing:.08em;color:var(--dim);white-space:nowrap;
-  display:inline-flex;align-items:center;gap:3.2rem}
-.track span::after{content:"/";color:var(--dimmer)}
+  width:100px;z-index:2;pointer-events:none}
+.ticker::before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
+.ticker::after{right:0;background:linear-gradient(270deg,var(--panel),transparent)}
+.ticker-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);margin:0 0 24px;text-align:center;letter-spacing:.01em}
+.track{display:flex;gap:50px;width:max-content}
+.track span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
+  color:var(--dim);white-space:nowrap;display:inline-flex;align-items:center;gap:50px}
+.track span::after{content:"/";color:var(--rule)}
 
 /* sections --------------------------------------------------------------- */
-.sec{padding:6rem 0;border-bottom:1px solid var(--line)}
-.sec-head{max-width:46rem;margin:0 0 3.2rem}
-.sec-head .lede{margin-top:1.2rem}
+.sec{padding:140px 0;border-bottom:1px solid var(--line)}
+.sec-head{max-width:var(--col);margin:0 0 50px}
+@media (max-width:760px){.sec{padding:80px 0}.hero{padding:80px 0 60px}}
 
-/* statement + split (the template's intersection block) ------------------- */
-.split{border:1px solid var(--line);background:var(--panel)}
-.split-row{padding:2rem 1.9rem;display:grid;grid-template-columns:8rem 1fr;
-  gap:1.8rem;align-items:start}
-.split-row + .split-row{border-top:1px solid var(--line)}
-.split-tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer);padding-top:.4rem}
-.declared{font-size:clamp(1.15rem,2.5vw,1.55rem);line-height:1.35;
-  color:var(--dim);margin:0;letter-spacing:-.02em}
+/* declared / measured split ---------------------------------------------- */
+.split{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);
+  overflow:hidden}
+.split-row{padding:30px 28px;display:grid;grid-template-columns:120px 1fr;gap:24px;
+  align-items:start}
+.split-row + .split-row{border-top:1px dashed var(--line2)}
+.split-tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);padding-top:4px;letter-spacing:.01em}
+.declared{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+  font-size:clamp(20px,2.6vw,28px);line-height:1.3em;color:var(--ink2);margin:0}
 .measured{font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:clamp(1rem,2.2vw,1.3rem);line-height:1.4;margin:0;color:var(--ink)}
+  font-size:clamp(15px,2vw,18px);line-height:1.5em;margin:0;color:var(--ink)}
 .measured b{color:var(--signal);font-weight:500}
-.figure{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:2.8rem;
-  color:var(--signal);line-height:1;margin:1.1rem 0 .2rem;
-  font-variant-numeric:tabular-nums}
-.src{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
-  color:var(--dimmer);margin:.7rem 0 0}
-.scale{width:100%;height:26px;display:block;margin:.6rem 0 0;overflow:visible}
-.scale .z1{fill:#161C26}.scale .z2{fill:#121822}.scale .z3{fill:#0E141C}
+.figure{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:44px;
+  color:var(--signal);line-height:1;margin:20px 0 4px;font-variant-numeric:tabular-nums}
+.src{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);margin:10px 0 0}
+.scale{width:100%;height:26px;display:block;margin:10px 0 0;overflow:visible}
+.scale .z1{fill:#F0F0F0}.scale .z2{fill:#E8E8E8}.scale .z3{fill:#E0E0E0}
 .scale .axis{stroke:var(--line2);stroke-width:1}
-.scale .lim{stroke:var(--dimmer);stroke-width:1;stroke-dasharray:2 2}
+.scale .lim{stroke:var(--rule);stroke-width:1;stroke-dasharray:2 2}
 .scale .mark2{stroke:var(--signal);stroke-width:2.5}
 .scale text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:7.5px;
   fill:var(--dimmer)}
-@media (max-width:700px){
-  .split-row{grid-template-columns:1fr;gap:.9rem}
-}
+@media (max-width:700px){.split-row{grid-template-columns:1fr;gap:12px}}
 
-/* feature cards (the template's capabilities grid) ------------------------ */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);
-  border:1px solid var(--line);background:var(--panel)}
-.cards > article{padding:2.1rem 1.9rem;border-right:1px solid var(--line);
-  border-bottom:1px solid var(--line);position:relative;transition:background .25s}
-.cards > article:hover{background:var(--panel2)}
-.cards > article:nth-child(2n){border-right:0}
-.cards > article:nth-last-child(-n+2){border-bottom:0}
-.card-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer);
-  display:flex;justify-content:space-between;margin-bottom:1.4rem}
-.card-n b{color:var(--signal);font-weight:400}
-.cards h3{font-size:1.3rem;margin:0 0 .7rem}
-.cards p{margin:0;color:var(--dim);font-size:.94rem}
-@media (max-width:760px){
-  .cards{grid-template-columns:1fr}
-  .cards > article{border-right:0}
-  .cards > article:last-child{border-bottom:0}
-  .cards > article:nth-last-child(2){border-bottom:1px solid var(--line)}
-}
+/* capability cards ------------------------------------------------------- */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cards > article{padding:30px 28px;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--r);transition:border-color .25s}
+.cards > article:hover{border-color:var(--line2)}
+.card-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);display:flex;justify-content:space-between;margin-bottom:24px;
+  letter-spacing:.01em}
+.card-n b{color:var(--ink);font-weight:400}
+.cards h3{font-size:24px;margin:0 0 10px}
+.cards p{margin:0;color:var(--dim);font-size:15px;line-height:1.6em}
+@media (max-width:760px){.cards{grid-template-columns:1fr}}
 
-/* pipeline (the template's integration ecosystem) ------------------------- */
-.pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
-  border:1px solid var(--line);background:var(--panel)}
-.pipe > div{padding:2rem 1.8rem;border-right:1px solid var(--line);position:relative}
-.pipe > div:last-child{border-right:0}
-.pipe-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dimmer);
-  display:block;margin-bottom:1.1rem}
-.pipe h3{font-size:1.35rem;margin:0 0 .6rem}
-.pipe p{margin:0;color:var(--dim);font-size:.92rem}
-.pipe code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.78rem;
-  color:var(--signal)}
-.pipe-arrow{position:absolute;right:-6px;top:2.35rem;width:11px;height:11px;
-  background:var(--bg);border-right:1px solid var(--line2);
-  border-top:1px solid var(--line2);transform:rotate(45deg);z-index:2}
+/* pipeline --------------------------------------------------------------- */
+.pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pipe > div{padding:30px 28px;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);position:relative}
+.pipe-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);display:block;margin-bottom:20px;letter-spacing:.01em}
+.pipe h3{font-size:24px;margin:0 0 10px}
+.pipe p{margin:0;color:var(--dim);font-size:15px;line-height:1.6em}
+.pipe code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--ink);background:var(--panel2);padding:2px 6px;border-radius:4px}
+.pipe-arrow{position:absolute;right:-16px;top:34px;width:11px;height:11px;
+  border-right:1px solid var(--rule);border-top:1px solid var(--rule);
+  transform:rotate(45deg);z-index:2}
 @media (max-width:820px){
-  .pipe{grid-template-columns:1fr}
-  .pipe > div{border-right:0;border-bottom:1px solid var(--line)}
-  .pipe > div:last-child{border-bottom:0}
-  .pipe-arrow{display:none}
+  .pipe{grid-template-columns:1fr}.pipe-arrow{display:none}
 }
 
-/* grade cards (the slot the template used for pricing tiers) -------------- */
-.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.grade{border:1px solid var(--line);background:var(--panel);padding:1.9rem 1.7rem;
-  display:flex;flex-direction:column}
-.grade.is-key{border-color:var(--line2)}
-.grade-code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:3.2rem;
-  line-height:1;color:var(--dimmer);margin:0 0 1.2rem;font-variant-numeric:tabular-nums}
+/* exit-code cards -------------------------------------------------------- */
+.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grade{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);
+  padding:30px 28px;display:flex;flex-direction:column}
+.grade.is-key{border-color:var(--ink)}
+.grade-code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:54px;
+  line-height:1;color:var(--rule);margin:0 0 20px;font-variant-numeric:tabular-nums}
 .grade.is-key .grade-code{color:var(--signal)}
-.grade h3{font-size:1.25rem;margin:0 0 .6rem}
-.grade > p{margin:0 0 1.4rem;color:var(--dim);font-size:.92rem}
-.grade ul{list-style:none;margin:auto 0 0;padding:1.2rem 0 0;
-  border-top:1px solid var(--line)}
-.grade li{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;
-  color:var(--dim);padding:.42rem 0 .42rem 1.2rem;position:relative}
-.grade li::before{content:"+";position:absolute;left:0;color:var(--dimmer)}
+.grade h3{font-size:20px;margin:0 0 10px}
+.grade > p{margin:0 0 24px;color:var(--dim);font-size:15px;line-height:1.6em}
+.grade ul{list-style:none;margin:auto 0 0;padding:20px 0 0;
+  border-top:1px dashed var(--line2)}
+.grade li{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dim);padding:6px 0 6px 20px;position:relative;line-height:1.5em}
+.grade li::before{content:"+";position:absolute;left:0;color:var(--rule)}
 @media (max-width:820px){.grades{grid-template-columns:1fr}}
 
-/* limits (replaces the template's testimonial carousel) ------------------- */
-.limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
-  gap:0;border:1px solid var(--line);background:var(--panel)}
-.limits > div{padding:1.9rem 1.7rem;border-right:1px solid var(--line)}
-.limits > div:last-child{border-right:0}
-.limits h3{font-size:1.15rem;margin:0 0 .6rem}
-.limits p{margin:0;color:var(--dim);font-size:.9rem}
-@media (max-width:900px){
-  .limits{grid-template-columns:1fr}
-  .limits > div{border-right:0;border-bottom:1px solid var(--line)}
-  .limits > div:last-child{border-bottom:0}
-}
+/* limits ----------------------------------------------------------------- */
+.limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.limits > div{padding:28px;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r)}
+.limits h3{font-size:18px;margin:0 0 10px}
+.limits p{margin:0;color:var(--dim);font-size:14px;line-height:1.6em}
 
 /* method table ----------------------------------------------------------- */
 .probes{width:100%;border-collapse:collapse;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.82rem}
-.probes th{text-align:left;font-weight:400;color:var(--dimmer);font-size:.62rem;
-  letter-spacing:.16em;text-transform:uppercase;padding:0 1rem .9rem 0;
-  border-bottom:1px solid var(--line2)}
-.probes td{padding:1.05rem 1rem 1.05rem 0;border-bottom:1px solid var(--line);
-  vertical-align:top;color:var(--dim)}
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.probes th{text-align:left;font-weight:400;color:var(--dimmer);font-size:13px;
+  padding:20px 20px 16px;border-bottom:1px solid var(--line2)}
+.probes td{padding:20px;border-bottom:1px dashed var(--line2);vertical-align:top;
+  color:var(--dim);line-height:1.6em}
+.probes tr:last-child td{border-bottom:0}
 .probes td:first-child{color:var(--ink);white-space:nowrap}
 .probes td:last-child{color:var(--ink);text-align:right;white-space:nowrap;
   font-variant-numeric:tabular-nums}
 @media (max-width:720px){.probes th:nth-child(2),.probes td:nth-child(2){display:none}}
 
 /* faq -------------------------------------------------------------------- */
-.faq{border-top:1px solid var(--line)}
-.faq details{border-bottom:1px solid var(--line)}
-.faq summary{font-size:1.2rem;padding:1.4rem 2.6rem 1.4rem 0;cursor:pointer;
-  list-style:none;position:relative;color:var(--ink);letter-spacing:-.02em}
+.faq{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:0 28px}
+.faq details{border-bottom:1px dashed var(--line2)}
+.faq details:last-child{border-bottom:0}
+.faq summary{font-size:20px;padding:24px 40px 24px 0;cursor:pointer;list-style:none;
+  position:relative;color:var(--ink);letter-spacing:-.02em;font-weight:500;
+  line-height:1.3em}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"[ + ]";position:absolute;right:0;top:50%;
-  transform:translateY(-50%);font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.72rem;color:var(--dimmer)}
-.faq details[open] summary::after{content:"[ - ]";color:var(--signal)}
-.faq summary:hover{color:var(--signal)}
-.faq summary:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
-.faq p{margin:0 0 1.5rem;color:var(--dim);font-size:.95rem;max-width:64ch}
-.faq code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.85em;
-  color:var(--signal)}
+.faq summary::after{content:"[ + ]";position:absolute;right:0;top:26px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--rule);font-weight:400}
+.faq details[open] summary::after{content:"[ - ]";color:var(--ink)}
+.faq summary:hover{color:var(--dim)}
+.faq summary:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+.faq p{margin:0 0 24px;color:var(--dim);font-size:15px;line-height:1.6em;max-width:var(--col)}
+.faq code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.9em;
+  color:var(--ink);background:var(--panel2);padding:2px 6px;border-radius:4px}
 
 /* closing cta ------------------------------------------------------------ */
-.close{padding:6.5rem 0;text-align:center;position:relative;overflow:hidden}
+.close{padding:140px 0;text-align:center;position:relative;overflow:hidden}
 .close-grid{position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),
                    linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:74px 74px;
-  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 10%,transparent 70%);
-  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 10%,transparent 70%);
-  opacity:.55}
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 66% 70% at 50% 50%,#000 8%,transparent 68%);
+  -webkit-mask-image:radial-gradient(ellipse 66% 70% at 50% 50%,#000 8%,transparent 68%);
+  opacity:.85}
 .close .shell{position:relative;z-index:1}
 .close .eyebrow{justify-content:center}
-.close h2{max-width:18ch;margin:0 auto}
-.close .lede{margin:1.4rem auto 0;text-align:center}
-.close .form{margin:2.4rem auto 0;justify-content:center}
+.close h2{max-width:17ch;margin:0 auto}
+.close .lede{margin:20px auto 0}
+.close .form{margin:30px auto 0;justify-content:center}
 .close .form label{text-align:center}
-.assur{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin:2.6rem 0 0}
-.assur span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;
-  letter-spacing:.06em;color:var(--dim);display:inline-flex;align-items:center;gap:.5rem}
-.assur span::before{content:"+";color:var(--signal)}
+.assur{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin:30px 0 0}
+.assur span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dim);display:inline-flex;align-items:center;gap:8px}
+.assur span::before{content:"+";color:var(--rule)}
+@media (max-width:760px){.close{padding:80px 0}}
 
 /* footer ----------------------------------------------------------------- */
-.foot{border-top:1px solid var(--line);padding:3.4rem 0 2rem}
-.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2.4rem}
-.foot-brand p{color:var(--dim);font-size:.9rem;margin:1rem 0 0;max-width:34ch}
-.foot h4{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.62rem;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--dimmer);
-  margin:0 0 1.1rem;font-weight:400}
+.foot{border-top:1px solid var(--line);padding:50px 0 30px;background:var(--panel)}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px}
+.foot-brand p{color:var(--dim);font-size:14px;margin:16px 0 0;max-width:34ch;
+  line-height:1.6em}
+.foot h4{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--dimmer);margin:0 0 20px;font-weight:400;letter-spacing:.01em}
 .foot ul{list-style:none;margin:0;padding:0}
-.foot li{margin-bottom:.6rem}
-.foot li a{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.74rem;
-  color:var(--dim);text-decoration:none}
-.foot li a:hover{color:var(--signal)}
-.foot-bot{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
-  margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
-  color:var(--dimmer)}
-@media (max-width:760px){.foot-top{grid-template-columns:1fr 1fr}
-  .foot-brand{grid-column:1 / -1}}
+.foot li{margin-bottom:10px}
+.foot li a{font-size:14px;color:var(--dim);text-decoration:none}
+.foot li a:hover{color:var(--ink)}
+.foot-bot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  margin-top:50px;padding-top:24px;border-top:1px dashed var(--line2);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;color:var(--dimmer)}
+@media (max-width:760px){
+  .foot-top{grid-template-columns:1fr 1fr;gap:30px}
+  .foot-brand{grid-column:1 / -1}
+}
 
 /* motion ----------------------------------------------------------------- */
 @media (prefers-reduced-motion:no-preference){
@@ -963,7 +951,7 @@ h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;line-height:1.03}
   .rise:nth-child(3){animation-delay:.2s}
   .rise:nth-child(4){animation-delay:.28s}
   .rise:nth-child(5){animation-delay:.36s}
-  @keyframes rise{from{opacity:0;transform:translateY(.8em)}to{opacity:1;transform:none}}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
   .track{animation:marquee 46s linear infinite}
   @keyframes marquee{from{transform:none}to{transform:translateX(-50%)}}
@@ -972,10 +960,9 @@ h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.03em;line-height:1.03}
     animation:draw 2.6s cubic-bezier(.22,.7,.3,1) .35s both}
   @keyframes draw{to{stroke-dashoffset:0}}
 
-  /* scroll-driven reveal, degrades to static where unsupported */
   .reveal{animation:reveal linear both;animation-timeline:view();
     animation-range:entry 8% cover 30%}
-  @keyframes reveal{from{opacity:0;transform:translateY(1.4em)}to{opacity:1;transform:none}}
+  @keyframes reveal{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 
   .scale .mark2{animation:sweep linear both;animation-timeline:view();
     animation-range:entry 15% cover 38%}
@@ -989,7 +976,7 @@ def _landing_shell(body: str, desc: str) -> str:
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#08090B">
+<meta name="theme-color" content="#F5F5F5">
 <title>Orqen &mdash; an empirical AI bill of materials</title>
 <meta name="description" content="{e(desc)}">
 <meta property="og:title" content="Orqen">
@@ -1196,7 +1183,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
     <a href="#method">Method</a>
     <a href="#pipeline">Pipeline</a>
   </div>
-  <a class="mark" href="#top">Orqen<span>.</span></a>
+  <a class="mark" href="#top">Orqen<span>/</span></a>
   <div class="nav-r">
     <a href="#questions">Questions</a>
     <a href="/standards">Coverage</a>
@@ -1208,7 +1195,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <p class="eyebrow rise">Empirical AI bill of materials</p>
     <h1 class="h-xl rise">Every model ships with a description.
-      <em>Almost none ship with a measurement.</em></h1>
+      <span class="ser">Almost none ship with a measurement.</span></h1>
     <p class="lede rise">Orqen runs the model, records what it actually did, and
       issues a certificate you can send to anyone.
       <strong>No account, no install, permanent URL.</strong></p>
@@ -1244,7 +1231,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">The gap</p>
-      <h2 class="h-lg">The declared and the measured are not the same document.</h2>
+      <h2 class="h-lg">The declared and the measured are <span class="ser">not the same document.</span></h2>
       <p class="lede">Existing bill-of-materials tooling reads the claim: the
         card, the config, the licence chain. None of it runs the model. A model
         can hold a complete card and still return the reading below.</p>
@@ -1277,7 +1264,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">Probe families</p>
-      <h2 class="h-lg">Four measurements, one fingerprint.</h2>
+      <h2 class="h-lg">Four measurements, <span class="ser">one fingerprint.</span></h2>
       <p class="lede">Each family returns a fixed set of metrics in a versioned
         order, so two runs of the same model are comparable and a drift between
         them is a fact rather than an impression.</p>
@@ -1290,7 +1277,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">The pipeline</p>
-      <h2 class="h-lg">Three layers. One document, one signature.</h2>
+      <h2 class="h-lg">Three layers. <span class="ser">One document, one signature.</span></h2>
     </div>
     <div class="pipe reveal">
       <div>
@@ -1325,7 +1312,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">The method</p>
-      <h2 class="h-lg">Black-box only. No weights, no gradients, no privileged access.</h2>
+      <h2 class="h-lg">Black-box only. <span class="ser">No weights, no gradients, no privileged access.</span></h2>
       <p class="lede">Anything Orqen can measure, you can measure about a model
         you did not train and cannot see inside &mdash; which is the position
         nearly everyone deploying a model is actually in.</p>
@@ -1341,7 +1328,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">Exit codes</p>
-      <h2 class="h-lg">What an audit returns.</h2>
+      <h2 class="h-lg">What an audit <span class="ser">returns.</span></h2>
       <p class="lede">The same three outcomes on the command line, in CI, and on
         the passport. The third exists because a broken audit must not be
         indistinguishable from a clean one.</p>
@@ -1354,7 +1341,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">Stated plainly</p>
-      <h2 class="h-lg">What this does not tell you.</h2>
+      <h2 class="h-lg">What this <span class="ser">does not</span> tell you.</h2>
     </div>
     <div class="limits reveal">{limits}</div>
   </div>
@@ -1364,7 +1351,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="shell">
     <div class="sec-head reveal">
       <p class="eyebrow">Asked before</p>
-      <h2 class="h-lg">The questions worth asking first.</h2>
+      <h2 class="h-lg">The questions <span class="ser">worth asking first.</span></h2>
     </div>
     <div class="faq reveal">{faq}</div>
   </div>
@@ -1374,7 +1361,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
   <div class="close-grid"></div>
   <div class="shell">
     <p class="eyebrow">Issue a passport</p>
-    <h2 class="h-lg">Measure a model in about twenty seconds.</h2>
+    <h2 class="h-lg">Measure a model in <span class="ser">about twenty seconds.</span></h2>
     <p class="lede">Paste a Hugging Face id. Orqen runs the suite, writes the
       measurements into a CycloneDX document, signs it, and gives you a URL.</p>
     <form class="form" method="post" action="/audit">
@@ -1394,7 +1381,7 @@ def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
 <footer class="foot"><div class="shell">
   <div class="foot-top">
     <div class="foot-brand">
-      <a class="mark" href="#top">Orqen<span>.</span></a>
+      <a class="mark" href="#top">Orqen<span>/</span></a>
       <p>An empirical AI bill of materials. Runs the model, measures what it
         does, and writes the result back into the standard document.</p>
     </div>
