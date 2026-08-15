@@ -8,14 +8,24 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug URL
+        run: |
+          echo "URL is: ${{ vars.ORQEN_URL }}"
+          echo "Full target: ${{ vars.ORQEN_URL }}/health"
+
+      - name: DNS check
+        run: nslookup orqen-u28e.onrender.com || true
+
       - name: Ping health endpoint
         run: |
           for i in $(seq 1 10); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 --connect-timeout 10 \
-              "${{ vars.ORQEN_URL }}/health")
-            echo "Attempt $i: HTTP $code"
-            [ "$code" = "200" ] && exit 0
+            echo "Attempt $i..."
+            code=$(curl -v -s -o /dev/null -w '%{http_code}' --max-time 30 --connect-timeout 10 \
+              "${{ vars.ORQEN_URL }}/health" 2>&1)
+            echo "Output: $code"
+            httpcode=$(echo "$code" | tail -1)
+            [ "$httpcode" = "200" ] && exit 0
             sleep 20
           done
-          echo "service did not return 200 after 10 attempts"
+          echo "failed"
           exit 1
