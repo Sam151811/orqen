@@ -92,8 +92,8 @@ canvas{display:block}
 #scene{position:fixed;inset:0;z-index:0;pointer-events:none}
 #scene-veil{position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(ellipse 120% 90% at 50% 0%, rgba(0,0,0,.30), rgba(0,0,0,.86) 70%),
-    linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.70))}
+    radial-gradient(ellipse 130% 95% at 50% 8%, rgba(0,0,0,0), rgba(0,0,0,.42) 78%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.30) 62%, rgba(0,0,0,.58) 100%)}
 .shell{position:relative;z-index:2;max-width:var(--shell);margin:0 auto;
   padding:0 calc(var(--sp)*6)}
 
@@ -333,12 +333,12 @@ APP_JS = """
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     var scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000000, 0.055);
+    scene.fog = new THREE.FogExp2(0x000000, 0.032);
     var camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 200);
     camera.position.set(0, 0, 26);
     var group = new THREE.Group(); scene.add(group);
 
-    var COUNT = 2600, pos = new Float32Array(COUNT * 3);
+    var COUNT = 5200, pos = new Float32Array(COUNT * 3);
     for (var i = 0; i < COUNT; i++) {
       var u = Math.random(), v = Math.random();
       var theta = 2 * Math.PI * u, phi = Math.acos(2 * v - 1);
@@ -350,15 +350,16 @@ APP_JS = """
     var pg = new THREE.BufferGeometry();
     pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     group.add(new THREE.Points(pg, new THREE.PointsMaterial({
-      color: 0xffffff, size: 0.055, transparent: true, opacity: 0.62,
-      sizeAttenuation: true, depthWrite: false })));
+      color: 0xffffff, size: 0.115, transparent: true, opacity: 0.95,
+      sizeAttenuation: true, depthWrite: false,
+      blending: THREE.AdditiveBlending })));
 
     var core = new THREE.Mesh(new THREE.IcosahedronGeometry(6.4, 2),
       new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true,
-        transparent: true, opacity: 0.10 }));
+        transparent: true, opacity: 0.26 }));
     group.add(core);
-    var ring = new THREE.Mesh(new THREE.TorusGeometry(13.5, 0.02, 6, 200),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.22 }));
+    var ring = new THREE.Mesh(new THREE.TorusGeometry(13.5, 0.035, 8, 220),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 }));
     ring.rotation.x = Math.PI / 2.35; group.add(ring);
 
     var target = { x: 0, y: 0 }, current = { x: 0, y: 0 };
