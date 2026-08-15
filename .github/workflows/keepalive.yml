@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Ping health endpoint
         run: |
-          for i in 1 2 3; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 \
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 120 \
               "${{ vars.ORQEN_URL }}/health") && [ "$code" = "200" ] && exit 0
-            sleep 20
+            sleep 30
           done
           echo "service did not return 200 after 3 attempts"
           exit 1
