@@ -55,6 +55,18 @@ JSON_COLS = ("aibom", "probes", "fingerprint", "scores", "incidents")
 # quietly missing three sections.
 
 
+def _index_row(r):
+    """Shared shape for the fleet index. Tolerates rows written before a column
+    existed rather than dropping them from the index."""
+    slug, model_id, created_at, suite, scores, fp = r
+    return {
+        "slug": slug, "model_id": model_id, "created_at": created_at,
+        "suite_version": suite,
+        "scores": json.loads(scores) if scores else {},
+        "fingerprint": json.loads(fp) if fp else {},
+    }
+
+
 class _Base:
     def _row_to_passport(self, r):
         if not r:
@@ -120,6 +132,17 @@ class SqliteStore(_Base):
     def count_passports(self):
         return self.conn.execute("SELECT COUNT(*) FROM passports").fetchone()[0]
 
+    def list_passports(self, limit: int = 300, since: float | None = None):
+        sql = ("SELECT slug, model_id, created_at, suite_version, scores_json, "
+               "fingerprint_json FROM passports")
+        args: list = []
+        if since is not None:
+            sql += " WHERE created_at >= ?"
+            args.append(since)
+        sql += " ORDER BY created_at DESC LIMIT ?"
+        args.append(limit)
+        return [_index_row(r) for r in self.conn.execute(sql, args)]
+
 
 class PostgresStore(_Base):
     """Uses a small connection pool: Render's free Postgres allows few
@@ -171,6 +194,19 @@ class PostgresStore(_Base):
     def count_passports(self):
         with self.pool.connection() as c:
             return c.execute("SELECT COUNT(*) FROM passports").fetchone()[0]
+
+    def list_passports(self, limit: int = 300, since: float | None = None):
+        sql = ("SELECT slug, model_id, created_at, suite_version, scores_json, "
+               "fingerprint_json FROM passports")
+        args: list = []
+        if since is not None:
+            sql += " WHERE created_at >= %s"
+            args.append(since)
+        sql += " ORDER BY created_at DESC LIMIT %s"
+        args.append(limit)
+        with self.pool.connection() as c:
+            rows = c.execute(sql, args).fetchall()
+        return [_index_row(r) for r in rows]
 
 
 _singleton = None

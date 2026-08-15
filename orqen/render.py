@@ -40,264 +40,251 @@ METRIC_LABELS = {
     "leakage.max_run": "Longest memorised token run, normalised",
 }
 
-CSS = """
-:root{
-  --paper:#EEF0F2;        /* cool lab-stock ground */
-  --sheet:#FCFCFD;
-  --ink:#14181D;
-  --ink-2:#4A525C;
-  --rule:#C9D0D6;
-  --rule-hair:#DFE4E8;
-  --slate:#2E4A62;        /* structural accent, ink not neon */
-  --pass:#1F6F5C;
-  --review:#8A5A00;
-  --fail:#A3282C;
-  --none:#5A5F6A;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;background:var(--paper);color:var(--ink);
-  font-family:"Source Serif 4",Georgia,serif;font-size:16px;line-height:1.55;
-}
-.wrap{max-width:60rem;margin:0 auto;padding:2rem 1.25rem 5rem}
-.sheet{
-  background:var(--sheet);border:1px solid var(--rule);
-  box-shadow:0 1px 0 rgba(20,24,29,.04);
-}
+# The certificate now shares the application's palette and type system. What
+# separates it is structure, not brightness: no scene, no motion, numbered
+# clauses, a tighter measure, a document-control footer - and it inverts to white
+# paper on print, which is the one place a document genuinely needs to behave
+# differently from an interface.
+DOC_CSS = """
+body{font-family:var(--font-prose);font-weight:300;line-height:1.6}
+.sheet{position:relative;z-index:2;max-width:64rem;margin:0 auto;
+  border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+.doc{max-width:64rem;margin:0 auto;padding:0 calc(var(--sp)*6) calc(var(--sp)*20)}
 
-/* ---- masthead ---- */
-.mast{border-bottom:2px solid var(--ink);padding:1.5rem 1.75rem 1.25rem}
-.mast-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
-.brand{
-  font-family:Archivo,system-ui,sans-serif;font-weight:700;
-  letter-spacing:.22em;text-transform:uppercase;font-size:.8rem;color:var(--slate);
-}
-.doctype{
-  font-family:Archivo,system-ui,sans-serif;font-size:.7rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--ink-2);
-}
-.specimen{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:1.6rem;
-  font-weight:500;margin:.85rem 0 0;word-break:break-word;line-height:1.2;
-}
-.specimen-sub{font-size:.9rem;color:var(--ink-2);margin:.3rem 0 0}
+/* masthead ---------------------------------------------------------------- */
+.mast{border-bottom:1px solid var(--rule-strong);padding:calc(var(--sp)*12) calc(var(--sp)*8)}
+.mast-top{display:flex;justify-content:space-between;align-items:baseline;
+  gap:calc(var(--sp)*4);flex-wrap:wrap}
+.brand{font-family:var(--font-body);font-weight:500;font-size:var(--text-xs);
+  letter-spacing:.22em;text-transform:uppercase}
+.doctype{font-family:var(--font-body);font-size:var(--text-xs);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dim)}
+.specimen{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,var(--text-3xl));
+  font-weight:200;letter-spacing:-.03em;margin:calc(var(--sp)*6) 0 0;
+  word-break:break-word;line-height:1.15}
+.specimen-sub{font-size:var(--text-sm);color:var(--dim);margin:calc(var(--sp)*3) 0 0}
 
-/* ---- key/value grids ---- */
-.kv{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
-  gap:0;border-top:1px solid var(--rule-hair);
-}
-.kv > div{
-  padding:.7rem 1.75rem;border-bottom:1px solid var(--rule-hair);
-  border-right:1px solid var(--rule-hair);
-}
-.kv dt{
-  font-family:Archivo,system-ui,sans-serif;font-size:.62rem;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--ink-2);margin:0 0 .2rem;
-}
-.kv dd{
-  margin:0;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.82rem;word-break:break-word;
-}
+/* key/value grid ---------------------------------------------------------- */
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:0;
+  border-bottom:1px solid var(--rule);margin:0}
+.kv > div{padding:calc(var(--sp)*4) calc(var(--sp)*8);
+  border-right:1px solid rgba(255,255,255,.07)}
+.kv dt{font-family:var(--font-body);font-size:var(--text-xs);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);margin:0 0 calc(var(--sp)*2)}
+.kv dd{margin:0;font-family:var(--font-body);font-size:var(--text-sm);
+  word-break:break-word;color:var(--white)}
 
-/* ---- determination ---- */
-.determination{display:flex;gap:1.5rem;align-items:flex-start;padding:1.5rem 1.75rem;
-  border-bottom:1px solid var(--rule)}
-.stamp{
-  flex:0 0 auto;border:2px solid currentColor;padding:.5rem .9rem;
-  font-family:Archivo,system-ui,sans-serif;font-weight:700;font-size:1.05rem;
-  letter-spacing:.1em;text-transform:uppercase;line-height:1.1;
-}
-.stamp small{display:block;font-size:.55rem;letter-spacing:.12em;font-weight:600;
-  opacity:.75;margin-top:.25rem}
-.g-green,.g-green .stamp{color:var(--pass)}
-.g-amber,.g-amber .stamp{color:var(--review)}
-.g-red,.g-red .stamp{color:var(--fail)}
-.g-insufficient,.g-insufficient .stamp{color:var(--none)}
-.g-indeterminate,.g-indeterminate .stamp{color:var(--slate)}
-.strip .ci{stroke:var(--ink-2);stroke-width:5;opacity:.28;stroke-linecap:butt}
-.determination p{margin:.1rem 0 0;color:var(--ink);font-size:1.02rem}
-.tally{margin:.55rem 0 0;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.76rem;color:var(--ink-2)}
+/* determination ----------------------------------------------------------- */
+.determination{display:flex;gap:calc(var(--sp)*8);align-items:flex-start;
+  padding:calc(var(--sp)*10) calc(var(--sp)*8);border-bottom:1px solid var(--rule)}
+.stamp{flex:0 0 auto;border:1px solid currentColor;padding:calc(var(--sp)*3) calc(var(--sp)*5);
+  font-family:var(--font-body);font-size:var(--text-lg);font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;line-height:1.1;white-space:nowrap}
+.stamp small{display:block;font-size:var(--text-xs);letter-spacing:.14em;
+  font-weight:400;color:var(--dim);margin-top:calc(var(--sp)*2);text-transform:none;
+  letter-spacing:.06em}
+/* Monochrome, so severity is carried by weight and tone, never by hue alone -
+   and the stamp always spells the determination out in words. */
+.g-red .stamp{color:var(--white);border-width:2px}
+.g-amber .stamp{color:var(--white)}
+.g-indeterminate .stamp{color:var(--mid)}
+.g-green .stamp{color:var(--mid)}
+.g-insufficient .stamp{color:var(--dim);font-style:italic}
+.determination p{margin:0;font-size:var(--text-base);color:var(--white)}
+.tally{margin:calc(var(--sp)*4) 0 0 !important;font-family:var(--font-body);
+  font-size:var(--text-xs);letter-spacing:.08em;color:var(--dim) !important}
 
-/* ---- sections ---- */
-.sec{padding:1.6rem 1.75rem;border-bottom:1px solid var(--rule-hair)}
+/* clauses ----------------------------------------------------------------- */
+.sec{padding:calc(var(--sp)*12) calc(var(--sp)*8);border-bottom:1px solid var(--rule)}
 .sec:last-child{border-bottom:0}
-.sec > h2{
-  font-family:Archivo,system-ui,sans-serif;font-size:.72rem;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--slate);margin:0 0 1rem;
-  display:flex;align-items:baseline;gap:.65rem;
-}
-.sec > h2 .clause{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;color:var(--ink-2);
-  font-size:.72rem;letter-spacing:0;
-}
-.sec > h2::after{content:"";flex:1;height:1px;background:var(--rule-hair)}
-.lede{margin:-.35rem 0 1.15rem;color:var(--ink-2);font-size:.92rem;max-width:44rem}
+.sec > h2{font-family:var(--font-body);font-size:var(--text-xs);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--white);margin:0 0 calc(var(--sp)*8);
+  display:flex;align-items:baseline;gap:calc(var(--sp)*3)}
+.sec > h2 .clause{color:var(--dim);letter-spacing:0}
+.sec > h2::after{content:"";flex:1;height:1px;background:var(--rule)}
+.sec .lede{color:var(--mid);font-size:var(--text-sm);max-width:60ch;
+  margin:0 0 calc(var(--sp)*8)}
+.sec .lede strong{color:var(--white);font-weight:400}
+.sec .lede a{color:var(--white)}
+.sec .kv{border-bottom:0;border-top:1px solid rgba(255,255,255,.07)}
+.sec .kv > div{padding-left:0}
 
-/* ---- assay strips: the signature element ---- */
-.assay{border-top:1px solid var(--rule-hair)}
-.row{padding:.95rem 0;border-bottom:1px solid var(--rule-hair)}
-.row-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-  margin-bottom:.5rem;flex-wrap:wrap}
-.row-name{font-size:.95rem}
-.row-key{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
-  color:var(--ink-2);display:block}
-.row-val{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:1rem;
-  font-variant-numeric:tabular-nums;white-space:nowrap}
-.row-val b{font-weight:600}
-.verdict-tag{font-family:Archivo,system-ui,sans-serif;font-size:.6rem;font-weight:700;
-  letter-spacing:.1em;padding:.12rem .4rem;border:1px solid currentColor;margin-left:.5rem}
+/* assay strips ------------------------------------------------------------ */
+.assay{border-top:1px solid rgba(255,255,255,.07)}
+.row{padding:calc(var(--sp)*5) 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.row-head{display:flex;justify-content:space-between;align-items:baseline;
+  gap:calc(var(--sp)*4);margin-bottom:calc(var(--sp)*3);flex-wrap:wrap}
+.row-name{font-size:var(--text-sm);color:var(--white)}
+.row-key{display:block;font-family:var(--font-body);font-size:var(--text-xs);
+  color:var(--dim);margin-top:calc(var(--sp)*1)}
+.row-val{font-family:var(--font-body);font-size:var(--text-xl);font-weight:200;
+  font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}
+.row-val b{font-weight:400}
+.verdict-tag{font-family:var(--font-body);font-size:var(--text-xs);font-weight:400;
+  letter-spacing:.12em;padding:calc(var(--sp)*1) calc(var(--sp)*2);
+  border:1px solid currentColor;margin-left:calc(var(--sp)*3);text-transform:uppercase}
+.g-red .verdict-tag{color:var(--white)}
+.g-amber .verdict-tag,.g-indeterminate .verdict-tag{color:var(--mid)}
+.g-green .verdict-tag{color:var(--dim)}
 .strip{width:100%;height:34px;display:block;overflow:visible}
-.strip .band-pass{fill:var(--pass);opacity:.13}
-.strip .band-review{fill:var(--review);opacity:.15}
-.strip .band-fail{fill:var(--fail);opacity:.12}
+.strip .band-pass{fill:#fff;opacity:.035}
+.strip .band-review{fill:#fff;opacity:.075}
+.strip .band-fail{fill:#fff;opacity:.13}
 .strip .axis{stroke:var(--rule);stroke-width:1}
-.strip .peer{stroke:var(--ink-2);stroke-width:1;opacity:.5}
-.strip .measured{stroke-width:2.5}
-.strip .lim{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:2 2}
-.strip text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:8.5px;
-  fill:var(--ink-2)}
-.strip-legend{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;
-  color:var(--ink-2);margin:.3rem 0 0}
-@media (prefers-reduced-motion:no-preference){
-  .strip .measured{transform-origin:left;animation:mark .5s ease-out both}
-  @keyframes mark{from{opacity:0}to{opacity:1}}
-}
+.strip .lim{stroke:var(--dim);stroke-width:1;stroke-dasharray:2 2}
+.strip .peer{stroke:var(--dim);stroke-width:1}
+.strip .ci{stroke:var(--mid);stroke-width:5;opacity:.30;stroke-linecap:butt}
+.strip .measured{stroke:var(--white);stroke-width:2.5}
+.strip text{font-family:var(--font-body);font-size:8.5px;fill:var(--dim)}
+.strip-legend{font-family:var(--font-body);font-size:var(--text-xs);color:var(--dim);
+  margin:calc(var(--sp)*2) 0 0;line-height:1.5}
 
-/* ---- evidence ---- */
-.evidence{border:1px solid var(--rule-hair);margin:0 0 .8rem}
-.evidence > summary{
-  cursor:pointer;padding:.6rem .8rem;font-family:Archivo,system-ui,sans-serif;
-  font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
-  background:#F4F6F7;
-}
-.evidence > summary:focus-visible{outline:2px solid var(--slate);outline-offset:2px}
-.evidence .body{padding:.8rem;border-top:1px solid var(--rule-hair)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:0 0 .9rem}
-.pair > div{border-left:2px solid var(--rule);padding-left:.65rem}
-.pair h4{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
-  color:var(--ink-2);margin:0 0 .25rem;font-weight:500}
-.pair p{margin:0;font-size:.86rem}
-.method{font-size:.85rem;color:var(--ink-2);margin:.1rem 0 .8rem}
-table.bins{border-collapse:collapse;width:100%;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.76rem;margin:.2rem 0 .6rem}
-table.bins th,table.bins td{border:1px solid var(--rule-hair);padding:.3rem .5rem;
-  text-align:right;font-variant-numeric:tabular-nums}
-table.bins th{text-align:right;font-weight:500;color:var(--ink-2);background:#F4F6F7}
+/* exhibits ---------------------------------------------------------------- */
+.evidence{border:1px solid var(--rule);border-radius:var(--radius);
+  margin:0 0 calc(var(--sp)*3);background:var(--panel)}
+.evidence > summary{cursor:pointer;padding:calc(var(--sp)*4) calc(var(--sp)*5);
+  font-family:var(--font-body);font-size:var(--text-xs);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mid)}
+.evidence > summary:hover{color:var(--white)}
+.evidence > summary:focus-visible{outline:2px solid var(--white);outline-offset:-2px}
+.evidence[open] > summary{border-bottom:1px solid var(--rule);color:var(--white)}
+.evidence .body{padding:calc(var(--sp)*5)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--sp)*5);
+  margin:0 0 calc(var(--sp)*5)}
+.pair > div{border-left:1px solid var(--rule-strong);padding-left:calc(var(--sp)*4)}
+.pair h4{font-family:var(--font-body);font-size:var(--text-xs);color:var(--dim);
+  margin:0 0 calc(var(--sp)*2);font-weight:400;letter-spacing:.06em}
+.pair p{margin:0;font-size:var(--text-sm);color:var(--mid)}
+.method{font-size:var(--text-sm);color:var(--dim);margin:0 0 calc(var(--sp)*5)}
+table.bins{border-collapse:collapse;width:100%;font-family:var(--font-body);
+  font-size:var(--text-xs);margin:0 0 calc(var(--sp)*5)}
+table.bins th,table.bins td{border:1px solid var(--rule);padding:calc(var(--sp)*2);
+  text-align:right;font-variant-numeric:tabular-nums;color:var(--mid);
+  white-space:nowrap;cursor:default}
+table.bins th{color:var(--dim);font-weight:400;text-transform:none;letter-spacing:0}
+table.bins th:hover{color:var(--dim)}
 table.bins td:first-child,table.bins th:first-child{text-align:left}
 
-/* ---- incidents ---- */
-.descriptor{border-left:3px solid var(--slate);padding:.1rem 0 .1rem .9rem;
-  margin:0 0 1.2rem;font-size:.95rem}
-.incident{border-top:1px solid var(--rule-hair);padding:.9rem 0}
-.incident h3{margin:0 0 .3rem;font-size:1rem;font-weight:600}
-.incident h3 a{color:var(--ink);text-decoration-color:var(--rule)}
-.incident p{margin:.25rem 0;font-size:.88rem;color:var(--ink-2)}
-.incident .why{color:var(--ink);font-size:.86rem}
-.meta-line{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
-  color:var(--ink-2);margin:.3rem 0 0}
-.conf-strong{color:var(--pass)}.conf-moderate{color:var(--review)}.conf-weak{color:var(--none)}
+/* incidents --------------------------------------------------------------- */
+.descriptor{border-left:2px solid var(--white);padding-left:calc(var(--sp)*5);
+  margin:0 0 calc(var(--sp)*8);font-size:var(--text-base);color:var(--white)}
+.incident{border-top:1px solid rgba(255,255,255,.07);padding:calc(var(--sp)*5) 0}
+.incident h3{margin:0 0 calc(var(--sp)*2);font-size:var(--text-base);font-weight:400;
+  color:var(--white)}
+.incident h3 a{text-decoration-color:var(--rule-strong);text-underline-offset:3px}
+.incident p{margin:calc(var(--sp)*2) 0;font-size:var(--text-sm);color:var(--dim)}
+.incident .why{color:var(--mid)}
+.meta-line{font-family:var(--font-body);font-size:var(--text-xs);color:var(--dim);
+  margin:calc(var(--sp)*2) 0 0 !important}
+.conf-strong{color:var(--white)}.conf-moderate{color:var(--mid)}.conf-weak{color:var(--dim)}
 
-/* ---- notices ---- */
-.notice{border:1px solid var(--review);border-left-width:3px;padding:.6rem .8rem;
-  margin:0 0 .6rem;font-size:.86rem;color:var(--ink)}
-.notice b{font-family:Archivo,system-ui,sans-serif;font-size:.62rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--review);display:block;margin-bottom:.15rem}
+/* coverage matrix --------------------------------------------------------- */
+.cov{border-collapse:collapse;width:100%;font-size:var(--text-sm);
+  margin:0 0 calc(var(--sp)*6)}
+.cov th{text-align:left;font-family:var(--font-body);font-size:var(--text-xs);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  padding:0 calc(var(--sp)*4) calc(var(--sp)*3) 0;border-bottom:1px solid var(--rule);
+  cursor:default}
+.cov th:hover{color:var(--dim)}
+.cov td{padding:calc(var(--sp)*4) calc(var(--sp)*4) calc(var(--sp)*4) 0;
+  border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:var(--mid);
+  white-space:normal}
+.cov td.ref{font-family:var(--font-body);font-size:var(--text-xs);white-space:nowrap;
+  color:var(--dim)}
+.cov td.req{color:var(--white);font-weight:400}
+.cov td.det{color:var(--dim);font-size:var(--text-sm)}
+.lvl{font-family:var(--font-body);font-size:var(--text-xs);letter-spacing:.1em;
+  text-transform:uppercase;padding:calc(var(--sp)*1) calc(var(--sp)*2);
+  border:1px solid currentColor;white-space:nowrap;display:inline-block}
+.lvl-measured{color:var(--white)}
+.lvl-partial{color:var(--mid)}
+.lvl-declared{color:var(--mid)}
+.lvl-external{color:var(--dim)}
 
-/* ---- attestation ---- */
-.attest{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.75rem;
-  border-top:1px solid var(--rule-hair);background:#F7F9F9;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;
-  color:var(--ink-2);flex-wrap:wrap}
-.attest .seal{border:1px solid var(--pass);color:var(--pass);padding:.2rem .45rem;
-  font-family:Archivo,system-ui,sans-serif;font-size:.58rem;letter-spacing:.1em;
-  text-transform:uppercase;white-space:nowrap}
-.attest .seal.warn{border-color:var(--review);color:var(--review)}
-.attest code{word-break:break-all}
-
-/* ---- coverage matrix ---- */
-.cov{border-collapse:collapse;width:100%;font-size:.86rem;margin:0 0 2rem}
-.cov th{text-align:left;font-family:Archivo,system-ui,sans-serif;font-size:.6rem;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--ink-2);
-  padding:0 .8rem .5rem 0;border-bottom:1px solid var(--rule)}
-.cov td{padding:.75rem .8rem .75rem 0;border-bottom:1px solid var(--rule-hair);
-  vertical-align:top}
-.cov td.ref{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;
-  white-space:nowrap;color:var(--ink-2)}
-.cov td.req{font-weight:600}
-.cov td.det{color:var(--ink-2);font-size:.84rem}
-.lvl{font-family:Archivo,system-ui,sans-serif;font-size:.58rem;letter-spacing:.09em;
-  text-transform:uppercase;padding:.14rem .4rem;border:1px solid currentColor;
-  white-space:nowrap;display:inline-block}
-.lvl-measured{color:var(--pass)}.lvl-declared{color:var(--slate)}
-.lvl-partial{color:var(--review)}.lvl-external{color:var(--none)}
-
-/* ---- comparison ---- */
-.cmp{border-collapse:collapse;width:100%;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.82rem}
-.cmp th{text-align:right;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-2);font-family:Archivo,system-ui,sans-serif;font-weight:600;
-  padding:0 .7rem .6rem;border-bottom:1px solid var(--rule)}
+/* comparison -------------------------------------------------------------- */
+.cmp{border-collapse:collapse;width:100%;font-family:var(--font-body);
+  font-size:var(--text-sm)}
+.cmp th{text-align:right;font-size:var(--text-xs);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);padding:0 calc(var(--sp)*4) calc(var(--sp)*3);
+  border-bottom:1px solid var(--rule);cursor:default}
 .cmp th:first-child{text-align:left}
-.cmp td{padding:.6rem .7rem;border-bottom:1px solid var(--rule-hair);text-align:right;
-  font-variant-numeric:tabular-nums}
-.cmp td:first-child{text-align:left;font-size:.78rem}
-.cmp .up{color:var(--fail)}.cmp .down{color:var(--pass)}.cmp .flat{color:var(--ink-2)}
+.cmp th:hover{color:var(--dim)}
+.cmp td{padding:calc(var(--sp)*3) calc(var(--sp)*4);
+  border-bottom:1px solid rgba(255,255,255,.07);text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--mid)}
+.cmp td:first-child{text-align:left}
+.cmp .up{color:var(--white);font-weight:500}
+.cmp .down{color:var(--dim)}
+.cmp .flat{color:var(--dim)}
 
-/* ---- footer / document control ---- */
-.control{padding:1.1rem 1.75rem;background:#F4F6F7;border-top:2px solid var(--ink);
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;color:var(--ink-2);
-  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.control a{color:var(--slate)}
+/* attestation + notices --------------------------------------------------- */
+.attest{display:flex;gap:calc(var(--sp)*5);align-items:flex-start;
+  padding:calc(var(--sp)*6) calc(var(--sp)*8);border-top:1px solid var(--rule);
+  font-family:var(--font-body);font-size:var(--text-xs);color:var(--dim);
+  flex-wrap:wrap;line-height:1.6}
+.attest .seal{border:1px solid var(--white);color:var(--white);
+  padding:calc(var(--sp)*2) calc(var(--sp)*3);font-size:var(--text-xs);
+  letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.attest .seal.warn{border-color:var(--dim);color:var(--dim)}
+.attest code{word-break:break-all;color:var(--mid)}
+.notice{border:1px solid var(--rule-strong);border-left-width:2px;
+  padding:calc(var(--sp)*4) calc(var(--sp)*5);margin:0 0 calc(var(--sp)*5);
+  font-size:var(--text-sm);color:var(--mid);background:var(--panel)}
+.notice b{display:block;font-family:var(--font-body);font-size:var(--text-xs);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--white);
+  margin-bottom:calc(var(--sp)*2)}
 
-/* ---- landing ---- */
-.hero{padding:3.5rem 1.75rem 2.5rem;text-align:left}
-.hero .brand{display:block;margin-bottom:1.4rem}
-.hero h1{font-family:Archivo,system-ui,sans-serif;font-size:clamp(1.9rem,5vw,3rem);
-  line-height:1.08;margin:0 0 .8rem;letter-spacing:-.015em;max-width:22ch}
-.hero .claim{font-size:1.05rem;color:var(--ink-2);max-width:46ch;margin:0 0 2rem}
-.hero .claim em{font-style:normal;color:var(--ink);border-bottom:1px solid var(--slate)}
-form.audit{display:flex;gap:.5rem;flex-wrap:wrap;max-width:34rem}
-form.audit input{
-  flex:1 1 18rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92rem;
-  padding:.7rem .8rem;border:1px solid var(--ink);background:var(--sheet);color:var(--ink);
-}
-form.audit input:focus-visible{outline:2px solid var(--slate);outline-offset:1px}
-form.audit button{
-  font-family:Archivo,system-ui,sans-serif;font-weight:600;font-size:.8rem;
-  letter-spacing:.1em;text-transform:uppercase;padding:.7rem 1.3rem;cursor:pointer;
-  background:var(--ink);color:var(--sheet);border:1px solid var(--ink);
-}
-form.audit button:hover{background:var(--slate);border-color:var(--slate)}
-form.audit button:focus-visible{outline:2px solid var(--slate);outline-offset:2px}
-.eg{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.74rem;
-  color:var(--ink-2);margin:.7rem 0 0}
-.eg a{color:var(--slate)}
+/* document control -------------------------------------------------------- */
+.control{padding:calc(var(--sp)*6) calc(var(--sp)*8) calc(var(--sp)*10);
+  border-top:1px solid var(--rule-strong);font-family:var(--font-body);
+  font-size:var(--text-xs);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);display:flex;justify-content:space-between;
+  gap:calc(var(--sp)*5);flex-wrap:wrap}
+.control a{color:var(--mid);text-decoration:none}
+.control a:hover{color:var(--white)}
 
-@media (max-width:640px){
-  .determination{flex-direction:column;gap:.9rem}
+@media (max-width:680px){
+  .determination{flex-direction:column;gap:calc(var(--sp)*5)}
   .pair{grid-template-columns:1fr}
-  .kv > div{padding-left:1rem;padding-right:1rem}
-  .sec,.mast,.determination,.control,.hero{padding-left:1rem;padding-right:1rem}
+  .mast,.determination,.sec,.control,.attest,.kv > div{
+    padding-left:calc(var(--sp)*4);padding-right:calc(var(--sp)*4)}
+  .sheet{border-left:0;border-right:0}
 }
+
+/* PRINT
+   The one place a document must behave differently from an interface. A
+   compliance artefact gets attached to a review pack, and a full-bleed black
+   page is both unreadable on paper and an ink cartridge. Everything inverts. */
 @media print{
-  body{background:#fff}
-  .wrap{max-width:none;padding:0}
-  .sheet{border:0;box-shadow:none}
+  body{background:#fff !important;color:#000 !important}
+  #scene,#scene-veil,.bar,.cue{display:none !important}
+  .sheet{border:0;max-width:none}
+  .specimen,.row-val,.tile-value{color:#000 !important}
+  .kv dd,.row-name,.determination p,.descriptor,.incident h3,
+  .cov td.req,.sec .lede strong{color:#000 !important}
+  .lede,.method,.pair p,.incident p,.incident .why,.cov td,.cov td.det,
+  .strip-legend,.meta-line,.tally,.attest,.control{color:#333 !important}
+  .kv dt,.sec > h2,.doctype,.brand{color:#000 !important}
+  .kv,.kv > div,.sec,.mast,.determination,.row,.incident,.control,.attest,
+  .evidence,.cov td,.cov th,.cmp td,.cmp th,table.bins th,table.bins td,
+  .pair > div,.notice{border-color:#bbb !important}
+  .mast,.control{border-color:#000 !important}
+  .stamp{color:#000 !important;border-color:#000 !important}
+  .verdict-tag,.lvl,.attest .seal{color:#000 !important;border-color:#000 !important}
+  .strip .band-pass{fill:#000;opacity:.05}
+  .strip .band-review{fill:#000;opacity:.11}
+  .strip .band-fail{fill:#000;opacity:.2}
+  .strip .measured{stroke:#000}
+  .strip .axis,.strip .lim,.strip .peer{stroke:#666}
+  .strip .ci{stroke:#666;opacity:.35}
+  .strip text{fill:#444}
+  .evidence,.notice{background:transparent !important}
   .evidence[open] > summary{display:none}
-  .evidence{border-color:#ccc}
   details{break-inside:avoid}
-  .row{break-inside:avoid}
+  .row,.incident{break-inside:avoid}
+  a{color:#000 !important}
 }
 """
-
-FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
-         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-         'family=Archivo:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&'
-         'family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">')
 
 
 def e(x) -> str:
@@ -305,15 +292,28 @@ def e(x) -> str:
 
 
 def _shell(title: str, body: str, desc: str = "") -> str:
+    """No canvas and no application script: a document does not animate, and the
+    certificate has to render identically in an email client, an incognito window
+    and a print preview."""
+    from .ui import CSS as APP_CSS, FONTS, _bar
+
     return f"""<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{e(title)}">
+<meta property="og:description" content="{e(desc)}">
 {FONTS}
-<style>{CSS}</style>
-</head><body><div class="wrap">{body}</div></body></html>"""
+<style>{APP_CSS}{DOC_CSS}</style>
+</head><body>
+{_bar()}
+{body}
+</body></html>"""
 
 
 # --- the assay strip ---------------------------------------------------------
@@ -486,6 +486,31 @@ def _incidents_block(descriptor: str, incidents: list[dict]) -> str:
             f'the model&rsquo;s marketing text.</p>{"".join(items)}')
 
 
+def _attestation_block(p: dict) -> str:
+    """The seal, and its honest caveat. An ephemeral key gets a warning rather
+    than a reassuring green mark, because a signature from a key that dies with
+    the process attests to nothing."""
+    att = p.get("attestation")
+    if not att:
+        return ('<div class="attest"><span class="seal warn">Unsigned</span>'
+                '<span>This instance is not signing passports, so this document '
+                'carries no evidence of who issued it or that it is unaltered.'
+                '</span></div>')
+    warn = att.get("ephemeral_key")
+    return f"""<div class="attest">
+  <span class="seal{' warn' if warn else ''}">
+    {'Signed, ephemeral key' if warn else 'Signed'}</span>
+  <span>Ed25519 &middot; key <code>{e(att.get('key_id',''))}</code> &middot;
+    digest <code>{e((att.get('payload_sha256') or '')[:24])}</code><br>
+    {'This key was generated at start-up and will not survive a restart, so the '
+     'signature attests to nothing durable. Set ORQEN_SIGNING_KEY to fix.'
+     if warn else
+     'Verify independently against the key published at '
+     '/.well-known/orqen-signing-key.json. A signature confirms issuer and '
+     'integrity, not that the measurements are correct.'}</span>
+</div>"""
+
+
 def passport_html(p: dict, base_url: str = "") -> str:
     scores = p.get("scores") or {}
     grade = scores.get("overall", "insufficient")
@@ -582,14 +607,14 @@ def passport_html(p: dict, base_url: str = "") -> str:
 <section class="sec">
   <h2><span class="clause">§5</span> Method and limitations</h2>
   {notices}
-  <p class="lede" style="margin-bottom:.6rem">Black-box probing only: no weights,
+  <p class="lede" style="margin-bottom:calc(var(--sp)*3)">Black-box probing only: no weights,
     gradients or training data were inspected. Measurements describe the model as
     served through the configured gateway on the issue date, which may differ from
     the same weights served elsewhere. A passing determination is evidence that
     the probes in suite {e(p.get('suite_version',''))} found nothing, not evidence
     that the model is safe.</p>
-  <p class="lede" style="margin-bottom:.6rem">{e(fp.get('replicate_note',''))}</p>
-  <p class="lede" style="margin-bottom:.6rem"><a href="{e(base_url)}/standards">See
+  <p class="lede" style="margin-bottom:calc(var(--sp)*3)">{e(fp.get('replicate_note',''))}</p>
+  <p class="lede" style="margin-bottom:calc(var(--sp)*3)"><a href="{e(base_url)}/standards">See
     exactly what this passport does and does not supply</a> against Annex IV,
     NIST AI RMF and the OWASP LLM Top 10 &mdash; including the points it supplies
     nothing toward.</p>
@@ -602,844 +627,20 @@ def passport_html(p: dict, base_url: str = "") -> str:
 <footer class="control">
   <span>Orqen &middot; empirical AI bill of materials</span>
   <span>{e(p['slug'])} &middot; fingerprint {e(fp.get('digest','—'))}</span>
-  <span><a href="{e(base_url)}/api/passport/{e(p['slug'])}">machine-readable JSON</a>
-   &middot; <a href="{e(base_url)}/api/passport/{e(p['slug'])}/aibom">CycloneDX AIBOM</a></span>
+  <span><a href="{e(base_url)}/api/passport/{e(p['slug'])}">JSON</a> &middot;
+    <a href="{e(base_url)}/api/passport/{e(p['slug'])}/aibom">CycloneDX AIBOM</a> &middot;
+    <a href="{e(base_url)}/p/{e(p['slug'])}/verify">verify signature</a> &middot;
+    <a href="{e(base_url)}/fleet">fleet</a></span>
 </footer>
 </main>""",
         f"Measured behavioural assessment of {p['model_id']}: {scores.get('verdict','')}",
     )
 
 
-
-# =============================================================================
-# Landing page
-#
-# Deliberately the inverse of the passport. The passport is pale lab stock - a
-# document of record, printed. The landing page is the instrument that produced
-# it: cold, dark, backlit. Two registers, one system, rather than two templates
-# sharing a logo.
-#
-# Its own type and colour tokens, and its own class prefix (.lp-), so nothing
-# here can collide with the certificate CSS above.
-# =============================================================================
-
-LANDING_FONTS = (
-    '<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-    'family=Inter:wght@400;500&'
-    'family=Instrument+Serif:ital@0;1&'
-    'family=IBM+Plex+Mono:wght@400;500&display=swap">'
-)
-
-LANDING_CSS = """
-/* Palette, type scale and spacing lifted from the reference export: an
-   off-white ground, black text, grey rules, and no accent colour in the
-   chrome at all. The one colour that appears is amber, and it is reserved
-   for a measured reading - the same rule the passport follows. */
-:root{
-  --bg:#F5F5F5;
-  --panel:#FFFFFF;
-  --panel2:#F7F7F7;
-  --ink:#000000;
-  --ink2:#333333;
-  --dim:#545454;
-  --dimmer:#636363;
-  --line:#DEDEDE;
-  --line2:#D1D1D1;
-  --rule:#BDBDBD;
-  --signal:#B45309;
-  --signal-soft:#B4530922;
-  --shell:1180px;
-  --col:780px;
-  --r:18px;
-  --r-sm:10px;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{
-  margin:0;background:var(--bg);color:var(--ink);
-  font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.6em;
-  font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden;
-}
-::selection{background:#5b9cfc33;color:#000}
-a{color:inherit}
-.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
-.shell{max-width:var(--shell);margin:0 auto;padding:0 24px;width:100%}
-
-/* type ------------------------------------------------------------------- */
-h1,h2,h3{margin:0;font-weight:500;line-height:1.2em;letter-spacing:-.02em}
-.h-xl{font-size:clamp(38px,5.6vw,54px)}
-.h-lg{font-size:clamp(32px,4vw,44px)}
-.h-md{font-size:clamp(24px,2.6vw,32px)}
-/* Instrument Serif italic is the reference's one expressive move: a phrase
-   inside an otherwise neutral heading, set in serif italic. */
-.ser{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
-  font-weight:400;letter-spacing:0}
-.eyebrow{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  letter-spacing:.01em;color:var(--dim);margin:0 0 20px;line-height:1.4em;
-  display:flex;align-items:center;gap:10px;
-}
-.eyebrow::before{content:"";width:24px;height:1px;background:var(--rule)}
-.lede{color:var(--dim);font-size:16px;line-height:1.6em;max-width:600px;margin:20px 0 0}
-.lede strong{color:var(--ink);font-weight:500}
-
-/* nav -------------------------------------------------------------------- */
-.nav{position:sticky;top:0;z-index:40;background:rgba(245,245,245,.85);
-  backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-.nav .shell{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-  height:64px;gap:20px}
-.nav-l,.nav-r{display:flex;gap:24px;align-items:center}
-.nav-r{justify-content:flex-end}
-.nav a{font-size:14px;color:var(--ink2);text-decoration:none;
-  display:inline-flex;align-items:center;gap:6px;letter-spacing:.01em}
-.nav a::after{content:"[ ]";color:var(--rule);font-family:"IBM Plex Mono",monospace;
-  font-size:12px;transition:color .2s,transform .2s}
-.nav a:hover{color:var(--ink)}
-.nav a:hover::after{color:var(--ink);transform:translateX(2px)}
-.mark{font-size:16px;font-weight:500;letter-spacing:-.02em;color:var(--ink);
-  text-decoration:none;white-space:nowrap}
-.mark span{font-family:"IBM Plex Mono",monospace;color:var(--dimmer)}
-@media (max-width:880px){
-  .nav .shell{grid-template-columns:auto 1fr}
-  .nav-l{display:none}.nav-r{gap:16px}
-  .nav-r a:not(:last-child){display:none}
-}
-
-/* hero ------------------------------------------------------------------- */
-.hero{position:relative;padding:140px 0 100px;overflow:hidden}
-.hero-grid{
-  position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),
-                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:radial-gradient(ellipse 78% 62% at 50% 0%,#000 18%,transparent 74%);
-  -webkit-mask-image:radial-gradient(ellipse 78% 62% at 50% 0%,#000 18%,transparent 74%);
-  opacity:.85;
-}
-.hero .shell{position:relative;z-index:1}
-.hero h1{max-width:15ch}
-.cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:30px 0 0}
-.btn{
-  font-size:14px;letter-spacing:.01em;padding:14px 24px;border-radius:var(--r-sm);
-  border:1px solid var(--line2);color:var(--ink);text-decoration:none;
-  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-  background:var(--panel);font-family:Inter,system-ui,sans-serif;font-weight:500;
-  transition:border-color .2s,background .2s,color .2s;
-}
-.btn:hover{border-color:var(--ink);background:var(--panel2)}
-.btn-fill{background:var(--ink);color:#fff;border-color:var(--ink)}
-.btn-fill:hover{background:var(--ink2);border-color:var(--ink2);color:#fff}
-.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-
-/* hero instrument panel -------------------------------------------------- */
-.instrument{margin:50px 0 0;border:1px solid var(--line);background:var(--panel);
-  border-radius:var(--r);padding:24px 28px;position:relative}
-.instrument-head{display:flex;justify-content:space-between;gap:20px;
-  flex-wrap:wrap;margin-bottom:20px}
-.instrument-head span{font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:13px;color:var(--dimmer);letter-spacing:.01em}
-.instrument-head b{color:var(--signal);font-weight:500}
-.trace{width:100%;height:110px;display:block}
-.trace .grid{stroke:#EBEBEB;stroke-width:1}
-.trace .base{stroke:var(--line2);stroke-width:1}
-.trace .sig{fill:none;stroke:var(--signal);stroke-width:1.6;
-  stroke-linecap:round;stroke-linejoin:round}
-.trace .lim{stroke:var(--rule);stroke-width:1;stroke-dasharray:4 4}
-.trace text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:6px;
-  fill:var(--dimmer)}
-
-/* form ------------------------------------------------------------------- */
-.form{display:flex;gap:10px;flex-wrap:wrap;max-width:600px;margin:28px 0 0}
-.form label{flex:1 0 100%;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:13px;color:var(--dim);margin-bottom:10px;letter-spacing:.01em}
-.form input{
-  flex:1 1 280px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
-  padding:14px 16px;color:var(--ink);background:var(--panel);
-  border:1px solid var(--line2);border-radius:var(--r-sm);
-}
-.form input::placeholder{color:var(--rule)}
-.form input:focus-visible{outline:none;border-color:var(--ink)}
-.hint{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dim);margin:16px 0 0}
-.hint a{color:var(--ink);text-underline-offset:3px}
-.notice{border:1px solid var(--line2);border-left:3px solid var(--signal);
-  background:var(--panel);border-radius:var(--r-sm);padding:14px 16px;
-  margin:24px 0 0;max-width:600px;font-size:14px}
-.notice b{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:13px;color:var(--signal);margin-bottom:4px}
-
-/* ticker ----------------------------------------------------------------- */
-.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  padding:24px 0;overflow:hidden;position:relative;background:var(--panel)}
-.ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;
-  width:100px;z-index:2;pointer-events:none}
-.ticker::before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
-.ticker::after{right:0;background:linear-gradient(270deg,var(--panel),transparent)}
-.ticker-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);margin:0 0 24px;text-align:center;letter-spacing:.01em}
-.track{display:flex;gap:50px;width:max-content}
-.track span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
-  color:var(--dim);white-space:nowrap;display:inline-flex;align-items:center;gap:50px}
-.track span::after{content:"/";color:var(--rule)}
-
-/* sections --------------------------------------------------------------- */
-.sec{padding:140px 0;border-bottom:1px solid var(--line)}
-.sec-head{max-width:var(--col);margin:0 0 50px}
-@media (max-width:760px){.sec{padding:80px 0}.hero{padding:80px 0 60px}}
-
-/* declared / measured split ---------------------------------------------- */
-.split{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);
-  overflow:hidden}
-.split-row{padding:30px 28px;display:grid;grid-template-columns:120px 1fr;gap:24px;
-  align-items:start}
-.split-row + .split-row{border-top:1px dashed var(--line2)}
-.split-tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);padding-top:4px;letter-spacing:.01em}
-.declared{font-family:"Instrument Serif",Georgia,serif;font-style:italic;
-  font-size:clamp(20px,2.6vw,28px);line-height:1.3em;color:var(--ink2);margin:0}
-.measured{font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:clamp(15px,2vw,18px);line-height:1.5em;margin:0;color:var(--ink)}
-.measured b{color:var(--signal);font-weight:500}
-.figure{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:44px;
-  color:var(--signal);line-height:1;margin:20px 0 4px;font-variant-numeric:tabular-nums}
-.src{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);margin:10px 0 0}
-.scale{width:100%;height:26px;display:block;margin:10px 0 0;overflow:visible}
-.scale .z1{fill:#F0F0F0}.scale .z2{fill:#E8E8E8}.scale .z3{fill:#E0E0E0}
-.scale .axis{stroke:var(--line2);stroke-width:1}
-.scale .lim{stroke:var(--rule);stroke-width:1;stroke-dasharray:2 2}
-.scale .mark2{stroke:var(--signal);stroke-width:2.5}
-.scale text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:7.5px;
-  fill:var(--dimmer)}
-@media (max-width:700px){.split-row{grid-template-columns:1fr;gap:12px}}
-
-/* capability cards ------------------------------------------------------- */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.cards > article{padding:30px 28px;background:var(--panel);
-  border:1px solid var(--line);border-radius:var(--r);transition:border-color .25s}
-.cards > article:hover{border-color:var(--line2)}
-.card-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);display:flex;justify-content:space-between;margin-bottom:24px;
-  letter-spacing:.01em}
-.card-n b{color:var(--ink);font-weight:400}
-.cards h3{font-size:24px;margin:0 0 10px}
-.cards p{margin:0;color:var(--dim);font-size:15px;line-height:1.6em}
-@media (max-width:760px){.cards{grid-template-columns:1fr}}
-
-/* pipeline --------------------------------------------------------------- */
-.pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.pipe > div{padding:30px 28px;background:var(--panel);border:1px solid var(--line);
-  border-radius:var(--r);position:relative}
-.pipe-n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);display:block;margin-bottom:20px;letter-spacing:.01em}
-.pipe h3{font-size:24px;margin:0 0 10px}
-.pipe p{margin:0;color:var(--dim);font-size:15px;line-height:1.6em}
-.pipe code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--ink);background:var(--panel2);padding:2px 6px;border-radius:4px}
-.pipe-arrow{position:absolute;right:-16px;top:34px;width:11px;height:11px;
-  border-right:1px solid var(--rule);border-top:1px solid var(--rule);
-  transform:rotate(45deg);z-index:2}
-@media (max-width:820px){
-  .pipe{grid-template-columns:1fr}.pipe-arrow{display:none}
-}
-
-/* exit-code cards -------------------------------------------------------- */
-.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.grade{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);
-  padding:30px 28px;display:flex;flex-direction:column}
-.grade.is-key{border-color:var(--ink)}
-.grade-code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:54px;
-  line-height:1;color:var(--rule);margin:0 0 20px;font-variant-numeric:tabular-nums}
-.grade.is-key .grade-code{color:var(--signal)}
-.grade h3{font-size:20px;margin:0 0 10px}
-.grade > p{margin:0 0 24px;color:var(--dim);font-size:15px;line-height:1.6em}
-.grade ul{list-style:none;margin:auto 0 0;padding:20px 0 0;
-  border-top:1px dashed var(--line2)}
-.grade li{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dim);padding:6px 0 6px 20px;position:relative;line-height:1.5em}
-.grade li::before{content:"+";position:absolute;left:0;color:var(--rule)}
-@media (max-width:820px){.grades{grid-template-columns:1fr}}
-
-/* limits ----------------------------------------------------------------- */
-.limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.limits > div{padding:28px;background:var(--panel);border:1px solid var(--line);
-  border-radius:var(--r)}
-.limits h3{font-size:18px;margin:0 0 10px}
-.limits p{margin:0;color:var(--dim);font-size:14px;line-height:1.6em}
-
-/* method table ----------------------------------------------------------- */
-.probes{width:100%;border-collapse:collapse;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
-.probes th{text-align:left;font-weight:400;color:var(--dimmer);font-size:13px;
-  padding:20px 20px 16px;border-bottom:1px solid var(--line2)}
-.probes td{padding:20px;border-bottom:1px dashed var(--line2);vertical-align:top;
-  color:var(--dim);line-height:1.6em}
-.probes tr:last-child td{border-bottom:0}
-.probes td:first-child{color:var(--ink);white-space:nowrap}
-.probes td:last-child{color:var(--ink);text-align:right;white-space:nowrap;
-  font-variant-numeric:tabular-nums}
-@media (max-width:720px){.probes th:nth-child(2),.probes td:nth-child(2){display:none}}
-
-/* faq -------------------------------------------------------------------- */
-.faq{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  padding:0 28px}
-.faq details{border-bottom:1px dashed var(--line2)}
-.faq details:last-child{border-bottom:0}
-.faq summary{font-size:20px;padding:24px 40px 24px 0;cursor:pointer;list-style:none;
-  position:relative;color:var(--ink);letter-spacing:-.02em;font-weight:500;
-  line-height:1.3em}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"[ + ]";position:absolute;right:0;top:26px;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--rule);font-weight:400}
-.faq details[open] summary::after{content:"[ - ]";color:var(--ink)}
-.faq summary:hover{color:var(--dim)}
-.faq summary:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
-.faq p{margin:0 0 24px;color:var(--dim);font-size:15px;line-height:1.6em;max-width:var(--col)}
-.faq code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.9em;
-  color:var(--ink);background:var(--panel2);padding:2px 6px;border-radius:4px}
-
-/* closing cta ------------------------------------------------------------ */
-.close{padding:140px 0;text-align:center;position:relative;overflow:hidden}
-.close-grid{position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),
-                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:radial-gradient(ellipse 66% 70% at 50% 50%,#000 8%,transparent 68%);
-  -webkit-mask-image:radial-gradient(ellipse 66% 70% at 50% 50%,#000 8%,transparent 68%);
-  opacity:.85}
-.close .shell{position:relative;z-index:1}
-.close .eyebrow{justify-content:center}
-.close h2{max-width:17ch;margin:0 auto}
-.close .lede{margin:20px auto 0}
-.close .form{margin:30px auto 0;justify-content:center}
-.close .form label{text-align:center}
-.assur{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin:30px 0 0}
-.assur span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dim);display:inline-flex;align-items:center;gap:8px}
-.assur span::before{content:"+";color:var(--rule)}
-@media (max-width:760px){.close{padding:80px 0}}
-
-/* footer ----------------------------------------------------------------- */
-.foot{border-top:1px solid var(--line);padding:50px 0 30px;background:var(--panel)}
-.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px}
-.foot-brand p{color:var(--dim);font-size:14px;margin:16px 0 0;max-width:34ch;
-  line-height:1.6em}
-.foot h4{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
-  color:var(--dimmer);margin:0 0 20px;font-weight:400;letter-spacing:.01em}
-.foot ul{list-style:none;margin:0;padding:0}
-.foot li{margin-bottom:10px}
-.foot li a{font-size:14px;color:var(--dim);text-decoration:none}
-.foot li a:hover{color:var(--ink)}
-.foot-bot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
-  margin-top:50px;padding-top:24px;border-top:1px dashed var(--line2);
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;color:var(--dimmer)}
-@media (max-width:760px){
-  .foot-top{grid-template-columns:1fr 1fr;gap:30px}
-  .foot-brand{grid-column:1 / -1}
-}
-
-/* motion ----------------------------------------------------------------- */
-@media (prefers-reduced-motion:no-preference){
-  .rise{animation:rise .85s cubic-bezier(.16,.84,.3,1) both}
-  .rise:nth-child(1){animation-delay:.04s}
-  .rise:nth-child(2){animation-delay:.12s}
-  .rise:nth-child(3){animation-delay:.2s}
-  .rise:nth-child(4){animation-delay:.28s}
-  .rise:nth-child(5){animation-delay:.36s}
-  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-  .track{animation:marquee 46s linear infinite}
-  @keyframes marquee{from{transform:none}to{transform:translateX(-50%)}}
-
-  .trace .sig{stroke-dasharray:1400;stroke-dashoffset:1400;
-    animation:draw 2.6s cubic-bezier(.22,.7,.3,1) .35s both}
-  @keyframes draw{to{stroke-dashoffset:0}}
-
-  .reveal{animation:reveal linear both;animation-timeline:view();
-    animation-range:entry 8% cover 30%}
-  @keyframes reveal{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-
-  .scale .mark2{animation:sweep linear both;animation-timeline:view();
-    animation-range:entry 15% cover 38%}
-  @keyframes sweep{from{transform:translateX(-62%)}to{transform:none}}
-}
-"""
-
-
-def _landing_shell(body: str, desc: str) -> str:
-    return f"""<!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#F5F5F5">
-<title>Orqen &mdash; an empirical AI bill of materials</title>
-<meta name="description" content="{e(desc)}">
-<meta property="og:title" content="Orqen">
-<meta property="og:description" content="{e(desc)}">
-<meta property="og:type" content="website">
-{LANDING_FONTS}
-<style>{LANDING_CSS}</style>
-</head><body>{body}</body></html>"""
-
-
-def _lp_scale(value: float, green: float, amber: float) -> str:
-    """The same grammar as the passport's assay strip. Threshold zones are tonal
-    steps of the ground; the only colour is the reading itself."""
-    hi = max(amber * 1.6, value * 1.15, 0.05)
-    W, top, h = 100.0, 3, 12
-
-    def x(v):
-        return max(0.0, min(W, v / hi * W))
-
-    gx, ax, vx = x(green), x(amber), x(value)
-    return f"""<svg class="scale" viewBox="0 0 100 26" preserveAspectRatio="none"
- role="img" aria-label="measured {value:.3f}, against a pass limit of {green:g}">
-<rect class="z1" x="0" y="{top}" width="{gx:.2f}" height="{h}"/>
-<rect class="z2" x="{gx:.2f}" y="{top}" width="{max(0, ax - gx):.2f}" height="{h}"/>
-<rect class="z3" x="{ax:.2f}" y="{top}" width="{max(0, W - ax):.2f}" height="{h}"/>
-<line class="lim" x1="{gx:.2f}" y1="{top}" x2="{gx:.2f}" y2="{top + h}"/>
-<line class="lim" x1="{ax:.2f}" y1="{top}" x2="{ax:.2f}" y2="{top + h}"/>
-<line class="axis" x1="0" y1="{top + h}" x2="100" y2="{top + h}"/>
-<line class="mark2" x1="{vx:.2f}" y1="{top - 2.5}" x2="{vx:.2f}" y2="{top + h + 2.5}"/>
-<text x="{gx + 1.2:.2f}" y="{top + h + 8}">pass limit {green:g}</text>
-</svg>"""
-
-
-HERO_TRACE = """
-<svg class="trace" viewBox="0 0 600 96" preserveAspectRatio="none" role="img"
- aria-label="Illustrative probe trace across a run">
-  <g class="grid">
-    <line x1="0" y1="24" x2="600" y2="24"/><line x1="0" y1="48" x2="600" y2="48"/>
-    <line x1="0" y1="72" x2="600" y2="72"/>
-    <line x1="120" y1="0" x2="120" y2="96"/><line x1="240" y1="0" x2="240" y2="96"/>
-    <line x1="360" y1="0" x2="360" y2="96"/><line x1="480" y1="0" x2="480" y2="96"/>
-  </g>
-  <line class="lim" x1="0" y1="34" x2="600" y2="34"/>
-  <text x="4" y="31">threshold</text>
-  <path class="sig" d="M0,70 L40,68 L72,71 L104,58 L136,62 L168,44 L200,49
-    L232,52 L264,30 L296,36 L328,33 L360,55 L392,51 L424,63 L456,59 L488,41
-    L520,46 L552,66 L600,64"/>
-  <line class="base" x1="0" y1="88" x2="600" y2="88"/>
-</svg>
-"""
-
-PROBE_TABLE = [
-    ("fairness", "Renders one prompt twice, differing only by name, gender or "
-                 "geography, and measures how far the two answers diverge in "
-                 "embedding space.", "6 pairs"),
-    ("robustness", "Asks the same question three ways, and checks whether a "
-                   "borderline refusal survives being rephrased.", "18 prompts"),
-    ("calibration", "Has the model state a confidence per answer on a labelled "
-                    "set, four items of which have no true answer, then bins "
-                    "correctness against stated confidence.", "14 items"),
-    ("leakage", "Prompts with the opening of a known public text and measures "
-                "the longest verbatim run it reproduces.", "4 canaries"),
-]
-
-# The structural slot the source template fills with client logos. This project
-# has no clients, and inventing them would contradict the one thing it argues
-# for, so the slot carries the documents the numbers are referenced to. Every
-# entry appears on a real passport.
-TICKER = [
-    "CycloneDX 1.6", "OWASP AIBOM Generator", "NIST AI RMF MEASURE 2.5",
-    "NIST AI RMF MEASURE 2.11", "OWASP LLM02", "OWASP LLM09",
-    "EU AI Act Annex IV", "AI Incident Database", "MITRE ATLAS",
-    "Ed25519 attestation",
-]
-
-CAPABILITIES = [
-    ("Fairness", "Counterfactual pairs and embedding divergence",
-     "One prompt, rendered twice, differing only by a name or a place. The "
-     "reading is how far the two answers move apart, measured against a noise "
-     "floor built from control pairs on the same model."),
-    ("Robustness", "Paraphrase invariance and refusal stability",
-     "The same question asked three ways. A safety boundary that holds under "
-     "one phrasing and collapses under another is not a boundary, and this is "
-     "the probe that says so."),
-    ("Calibration", "Elicited-confidence ECE on a labelled set",
-     "The only probe producing a quantity a model-risk function already "
-     "recognises. Four items in the set have false premises, where the correct "
-     "behaviour is to decline rather than answer confidently."),
-    ("Leakage", "Memorisation canaries and longest verbatim run",
-     "Prompted with the opening of a known public text, the probe measures the "
-     "longest run the model reproduces word for word. Mapped to OWASP LLM02."),
-]
-
-GRADES = [
-    ("0", "Passed the gate", False,
-     "Every finding sat at or below its threshold on the day the audit ran.",
-     ["Signed passport at a permanent URL",
-      "CycloneDX document with measured properties",
-      "Correlated incidents where the profile matches",
-      "Safe to reference in a review pack"]),
-    ("1", "Gate failure", True,
-     "A finding exceeded threshold. In CI this fails the build.",
-     ["Names the metric and the limit it cleared",
-      "Records whether the limit was cohort-derived or asserted",
-      "Retains every raw response behind the number",
-      "orqen check --fail-on red"]),
-    ("2", "Inconclusive", False,
-     "Under 50% probe coverage, so no safety conclusion is available.",
-     ["Grades insufficient, never green",
-      "A broken audit must not resemble a clean one",
-      "Names which probe families did not return",
-      "Run deadline of 75 seconds enforced"]),
-]
-
-LIMITS = [
-    ("A pass is not a clearance",
-     "It means this suite found nothing above threshold. Absence of a finding "
-     "is not evidence of safety, and the certificate says so on its face."),
-    ("One moment, one gateway",
-     "Measurements describe the model as served on the issue date. The same "
-     "weights served elsewhere may read differently."),
-    ("Limits are referenced, not settled",
-     "Where no reference cohort has been measured, thresholds express judgement "
-     "against published frameworks. The passport names which basis applied."),
-    ("Text models, for now",
-     "Text in, text out. No vision, no tabular, no continuous monitoring. The "
-     "fingerprint schema is versioned to grow into it."),
-]
-
-FAQ = [
-    ("Does a green grade mean the model is safe?",
-     "No, and the certificate says so on its face. Green means this suite of "
-     "probes found nothing above threshold on the day it ran. Below 50% probe "
-     "coverage the overall grade is <code>insufficient</code> rather than "
-     "green, because a broken audit must not be indistinguishable from a clean "
-     "one."),
-    ("Do you need the model weights?",
-     "No. Every probe is black-box: prompts in, completions out. The audited "
-     "model's identity is its Hugging Face id, but it can be served through any "
-     "OpenAI-compatible gateway. That is deliberate, because it is the position "
-     "nearly everyone deploying a model is actually in."),
-    ("Where do the thresholds come from?",
-     "Either a measured reference cohort or a published framework, and the "
-     "passport records which. Percentile bands over a real cohort are "
-     "measurement; asserted limits are judgement referenced to NIST AI RMF and "
-     "the OWASP LLM Top 10. Where a cohort shows no usable spread, the "
-     "derivation refuses rather than inventing a band."),
-    ("Can a passport be forged?",
-     "It can be screenshotted and edited like any public page, which is why "
-     "each one carries a detached Ed25519 signature over a canonical "
-     "serialisation of its own content, verifiable against a key published at "
-     "<code>/.well-known/orqen-signing-key.json</code>. That establishes "
-     "provenance, not truth: it proves the document was issued by the key "
-     "holder and not altered since, and nothing about whether the measurements "
-     "are correct."),
-    ("Is a passport a conformity assessment?",
-     "No. Orqen produces test evidence that can be filed against specific "
-     "points in a technical file; it is not the technical file. Annex IV "
-     "attaches to high-risk AI systems under Article 11, while a "
-     "general-purpose model from a model hub is governed by Article 53 and "
-     "Annex XI. Whether the audited model is a component of a high-risk system "
-     "is the provider's determination, not Orqen's."),
-    ("Who can see a passport once it is issued?",
-     "Anyone with the link. There are no accounts and no authentication, "
-     "because the artefact has to survive being pasted into an email, opened by "
-     "someone with no login, and printed to PDF for a review pack. That is a "
-     "scope decision, not an oversight."),
-]
-
-
-def landing_html(example: str = "meta-llama/Llama-3.1-8B-Instruct",
-                 error: str = "") -> str:
-    err = (f'<div class="notice" role="alert"><b>Not accepted</b>{e(error)}</div>'
-           if error else "")
-
-    probe_rows = "".join(
-        f"<tr><td>{e(n)}</td><td>{e(d)}</td><td>{e(c)}</td></tr>"
-        for n, d, c in PROBE_TABLE)
-
-    # Doubled so the marquee wraps at -50% with no visible seam.
-    ticker = "".join(f"<span>{e(t)}</span>" for t in TICKER * 2)
-
-    caps = "".join(
-        f'<article class="reveal"><div class="card-n"><span>{e(k)}</span>'
-        f'<b>0{i}</b></div><h3>{e(t)}</h3><p>{e(d)}</p></article>'
-        for i, (t, k, d) in enumerate(CAPABILITIES, 1))
-
-    grades = "".join(
-        f'<div class="grade reveal{" is-key" if key else ""}">'
-        f'<p class="grade-code">{e(code)}</p><h3>{e(title)}</h3><p>{e(desc)}</p>'
-        f'<ul>{"".join(f"<li>{e(b)}</li>" for b in bullets)}</ul></div>'
-        for code, title, key, desc, bullets in GRADES)
-
-    limits = "".join(
-        f'<div><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t, d in LIMITS)
-
-    faq = "".join(
-        f"<details><summary>{e(q)}</summary><p>{a}</p></details>"
-        for q, a in FAQ)
-
-    return _landing_shell(f"""
-<nav class="nav"><div class="shell">
-  <div class="nav-l">
-    <a href="#method">Method</a>
-    <a href="#pipeline">Pipeline</a>
-  </div>
-  <a class="mark" href="#top">Orqen<span>/</span></a>
-  <div class="nav-r">
-    <a href="#questions">Questions</a>
-    <a href="/standards">Coverage</a>
-  </div>
-</div></nav>
-
-<header class="hero" id="top">
-  <div class="hero-grid"></div>
-  <div class="shell">
-    <p class="eyebrow rise">Empirical AI bill of materials</p>
-    <h1 class="h-xl rise">Every model ships with a description.
-      <span class="ser">Almost none ship with a measurement.</span></h1>
-    <p class="lede rise">Orqen runs the model, records what it actually did, and
-      issues a certificate you can send to anyone.
-      <strong>No account, no install, permanent URL.</strong></p>
-    <div class="cta-row rise">
-      <a class="btn" href="#pipeline">How it works</a>
-      <a class="btn" href="/standards">Standards coverage</a>
-    </div>
-    {err}
-    <form class="form rise" method="post" action="/audit">
-      <label for="mid">Hugging Face model id</label>
-      <input id="mid" name="model_id" required placeholder="org/model"
-        spellcheck="false" autocomplete="off" autocapitalize="off">
-      <button class="btn btn-fill" type="submit">Issue passport</button>
-    </form>
-    <p class="hint">Or run the example:
-      <a href="/audit?model_id={e(example)}">{e(example)}</a> &middot; about 20 seconds</p>
-    <div class="instrument rise">
-      <div class="instrument-head">
-        <span>Probe trace &middot; illustrative</span>
-        <span>Excursions above threshold become findings &middot; <b>4 families</b></span>
-      </div>
-      {HERO_TRACE}
-    </div>
-  </div>
-</header>
-
-<section aria-label="Standards referenced">
-  <div class="shell"><p class="ticker-label">Referenced against</p></div>
-  <div class="ticker"><div class="track">{ticker}</div></div>
-</section>
-
-<section class="sec" id="gap">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">The gap</p>
-      <h2 class="h-lg">The declared and the measured are <span class="ser">not the same document.</span></h2>
-      <p class="lede">Existing bill-of-materials tooling reads the claim: the
-        card, the config, the licence chain. None of it runs the model. A model
-        can hold a complete card and still return the reading below.</p>
-    </div>
-    <div class="split reveal">
-      <div class="split-row">
-        <span class="split-tag">Declared</span>
-        <div>
-          <p class="declared">&ldquo;Llama 3.1 is intended for commercial and
-            research use. Limitations and risks are documented in the model
-            card.&rdquo;</p>
-          <p class="src">meta-llama/Llama-3.1-8B-Instruct &middot; model card &middot; unverified</p>
-        </div>
-      </div>
-      <div class="split-row">
-        <span class="split-tag">Measured</span>
-        <div>
-          <p class="measured">Prompted with the opening lines of four well-known
-            public texts, it reproduced <b>three of them verbatim</b>.</p>
-          <p class="figure">0.750</p>
-          <p class="src">leakage.verbatim_rate &middot; OWASP LLM02 sensitive information disclosure</p>
-          {_lp_scale(0.750, 0.05, 0.15)}
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="capabilities">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">Probe families</p>
-      <h2 class="h-lg">Four measurements, <span class="ser">one fingerprint.</span></h2>
-      <p class="lede">Each family returns a fixed set of metrics in a versioned
-        order, so two runs of the same model are comparable and a drift between
-        them is a fact rather than an impression.</p>
-    </div>
-    <div class="cards">{caps}</div>
-  </div>
-</section>
-
-<section class="sec" id="pipeline">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">The pipeline</p>
-      <h2 class="h-lg">Three layers. <span class="ser">One document, one signature.</span></h2>
-    </div>
-    <div class="pipe reveal">
-      <div>
-        <span class="pipe-n">01 &mdash; Declared</span>
-        <h3>What the card claims.</h3>
-        <p>The existing bill of materials, pulled through the OWASP AIBOM
-          generator, falling back to the Hugging Face API and then to a minimal
-          stub. Every fallback is recorded in <code>_orqen.source</code> rather
-          than smoothed over.</p>
-        <div class="pipe-arrow"></div>
-      </div>
-      <div>
-        <span class="pipe-n">02 &mdash; Measured</span>
-        <h3>What the probes saw.</h3>
-        <p>Four families, a fixed and versioned fingerprint, every raw response
-          retained. The metrics are written back as CycloneDX properties, so the
-          output is still a valid AIBOM &mdash; now carrying evidence.</p>
-        <div class="pipe-arrow"></div>
-      </div>
-      <div>
-        <span class="pipe-n">03 &mdash; Correlated</span>
-        <h3>How this profile failed before.</h3>
-        <p>The fingerprint is rendered into the vocabulary incident reports
-          actually use, then matched against the AI Incident Database and MITRE
-          ATLAS by embedding similarity and taxonomy overlap.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="method">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">The method</p>
-      <h2 class="h-lg">Black-box only. <span class="ser">No weights, no gradients, no privileged access.</span></h2>
-      <p class="lede">Anything Orqen can measure, you can measure about a model
-        you did not train and cannot see inside &mdash; which is the position
-        nearly everyone deploying a model is actually in.</p>
-    </div>
-    <table class="probes reveal">
-      <thead><tr><th>Family</th><th>What it measures</th><th>Scale</th></tr></thead>
-      <tbody>{probe_rows}</tbody>
-    </table>
-  </div>
-</section>
-
-<section class="sec" id="outcomes">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">Exit codes</p>
-      <h2 class="h-lg">What an audit <span class="ser">returns.</span></h2>
-      <p class="lede">The same three outcomes on the command line, in CI, and on
-        the passport. The third exists because a broken audit must not be
-        indistinguishable from a clean one.</p>
-    </div>
-    <div class="grades">{grades}</div>
-  </div>
-</section>
-
-<section class="sec" id="limits">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">Stated plainly</p>
-      <h2 class="h-lg">What this <span class="ser">does not</span> tell you.</h2>
-    </div>
-    <div class="limits reveal">{limits}</div>
-  </div>
-</section>
-
-<section class="sec" id="questions">
-  <div class="shell">
-    <div class="sec-head reveal">
-      <p class="eyebrow">Asked before</p>
-      <h2 class="h-lg">The questions <span class="ser">worth asking first.</span></h2>
-    </div>
-    <div class="faq reveal">{faq}</div>
-  </div>
-</section>
-
-<section class="close">
-  <div class="close-grid"></div>
-  <div class="shell">
-    <p class="eyebrow">Issue a passport</p>
-    <h2 class="h-lg">Measure a model in <span class="ser">about twenty seconds.</span></h2>
-    <p class="lede">Paste a Hugging Face id. Orqen runs the suite, writes the
-      measurements into a CycloneDX document, signs it, and gives you a URL.</p>
-    <form class="form" method="post" action="/audit">
-      <label for="mid2">Hugging Face model id</label>
-      <input id="mid2" name="model_id" required placeholder="org/model"
-        spellcheck="false" autocomplete="off" autocapitalize="off">
-      <button class="btn btn-fill" type="submit">Issue passport</button>
-    </form>
-    <div class="assur">
-      <span>No account required</span>
-      <span>Permanent public URL</span>
-      <span>Signed and independently verifiable</span>
-    </div>
-  </div>
-</section>
-
-<footer class="foot"><div class="shell">
-  <div class="foot-top">
-    <div class="foot-brand">
-      <a class="mark" href="#top">Orqen<span>/</span></a>
-      <p>An empirical AI bill of materials. Runs the model, measures what it
-        does, and writes the result back into the standard document.</p>
-    </div>
-    <div>
-      <h4>Sections</h4>
-      <ul>
-        <li><a href="#gap">The gap</a></li>
-        <li><a href="#capabilities">Probe families</a></li>
-        <li><a href="#pipeline">The pipeline</a></li>
-        <li><a href="#method">The method</a></li>
-        <li><a href="#questions">Questions</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Reference</h4>
-      <ul>
-        <li><a href="/standards">Standards coverage</a></li>
-        <li><a href="/.well-known/orqen-signing-key.json">Signing key</a></li>
-        <li><a href="/health">Service status</a></li>
-        <li><a href="#limits">Scope limits</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="foot-bot">
-    <span>Orqen &middot; empirical AI bill of materials</span>
-    <span>CycloneDX 1.6 &middot; OWASP AIBOM &middot; NIST AI RMF &middot; MITRE ATLAS</span>
-  </div>
-</div></footer>
-""", "Orqen runs an AI model, measures what it actually does, and issues a "
-     "shareable certificate of measured behaviour.")
-
-
-
-def _attestation_block(p: dict) -> str:
-    att = p.get("attestation")
-    if not att:
-        return ('<div class="attest"><span class="seal warn">Unsigned</span>'
-                '<span>This instance is not signing passports, so this document '
-                'carries no evidence of who issued it or that it is unaltered.'
-                '</span></div>')
-    warn = att.get("ephemeral_key")
-    return f"""<div class="attest">
-  <span class="seal{' warn' if warn else ''}">
-    {'Signed, ephemeral key' if warn else 'Signed'}</span>
-  <span>Ed25519 &middot; key <code>{e(att.get('key_id',''))}</code> &middot;
-    digest <code>{e((att.get('payload_sha256') or '')[:24])}</code><br>
-    {'This key was generated at start-up and will not survive a restart, so the '
-     'signature attests to nothing durable. Set ORQEN_SIGNING_KEY to fix.'
-     if warn else
-     'Verify independently against the key published at '
-     '/.well-known/orqen-signing-key.json. A signature confirms issuer and '
-     'integrity, not that the measurements are correct.'}</span>
-</div>"""
-
-
 def standards_html() -> str:
-    """The coverage matrix. Its job is to make Orqen's own citations checkable -
-    including, and especially, the rows where the answer is 'nothing'."""
+    """The coverage matrix, in the certificate register rather than the dark
+    application one: like the passport, it is reference material somebody will
+    print and attach to a review pack, not a surface they operate."""
     from . import standards as st
 
     blocks = []
@@ -1456,8 +657,7 @@ def standards_html() -> str:
   {f'<div class="notice"><b>Scope</b>{e(note)}</div>' if note else ''}
   <p class="lede">{counts[st.MEASURED]} measured &middot;
     {counts[st.PARTIAL]} partial &middot; {counts[st.DECLARED]} carried through
-    unverified &middot; {counts[st.EXTERNAL]} not supplied, of
-    {counts['total']}.</p>
+    unverified &middot; {counts[st.EXTERNAL]} not supplied, of {counts['total']}.</p>
   <table class="cov">
     <thead><tr><th>Ref</th><th>Requirement</th><th>Coverage</th>
       <th>What Orqen supplies</th></tr></thead>
@@ -1468,33 +668,31 @@ def standards_html() -> str:
 <header class="mast">
   <div class="mast-top"><span class="brand">Orqen</span>
     <span class="doctype">Standards coverage</span></div>
-  <h1 class="specimen" style="font-size:1.5rem">What this tool supplies, and what it does not</h1>
+  <h1 class="specimen" style="font-size:var(--text-2xl)">What this tool supplies, and what it does not</h1>
   <p class="specimen-sub">{e(st.headline())}</p>
 </header>
 <section class="sec">
-  <p class="lede" style="max-width:52rem">Orqen cites these frameworks on every
-    passport it issues. A citation is a claim, and an unchecked claim is the
-    thing this project exists to object to &mdash; so here is the claim, itemised.
-    Rows marked <span class="lvl lvl-external">Not supplied</span> are the honest
-    part of this page: they name work that has to come from somewhere else.
-    Nothing here is legal advice, and section titles are paraphrased rather than
-    quoted from the official texts.</p>
+  <p class="lede" style="max-width:60ch">Orqen cites these frameworks on every
+    passport it issues. A citation is a claim, and an unchecked claim is the thing
+    this project exists to object to &mdash; so here is the claim, itemised. Rows
+    marked <span class="lvl lvl-external">Not supplied</span> are the honest part
+    of this page: they name work that has to come from somewhere else. Nothing
+    here is legal advice, and section titles are paraphrased rather than quoted
+    from the official texts.</p>
 </section>
 {''.join(blocks)}
 <footer class="control">
   <span>Orqen &middot; empirical AI bill of materials</span>
-  <span><a href="/">Issue a passport</a> &middot; <a href="/api/standards">this page as JSON</a></span>
+  <span><a href="/">Issue a passport</a> &middot; <a href="/fleet">Fleet</a>
+    &middot; <a href="/api/standards">this page as JSON</a></span>
 </footer>
 </main>""", "What Orqen supplies against Annex IV, NIST AI RMF and OWASP, and what it does not.")
 
 
 def compare_html(a: dict, b: dict) -> str:
-    """Two passports side by side.
-
-    Ordered oldest-first so a delta reads as a change over time. Every metric is
-    'higher is worse', so an increase is rendered as a regression regardless of
-    which metric it is - that consistency is the reason the sign convention was
-    fixed at the fingerprint layer."""
+    """Two passports side by side, oldest first so a delta reads as change over
+    time. Every metric is oriented higher-is-worse at the fingerprint layer, so
+    an increase is a regression on any axis without special-casing."""
     if a["created_at"] > b["created_at"]:
         a, b = b, a
     fa, fb = a.get("fingerprint") or {}, b.get("fingerprint") or {}
@@ -1515,9 +713,9 @@ def compare_html(a: dict, b: dict) -> str:
 
     warn = "" if same_schema else (
         '<div class="notice"><b>Not directly comparable</b>These passports were '
-        'issued under different probe suites, so a difference may reflect a '
-        'change in method rather than a change in the model. Only metrics '
-        'present in both are shown.</div>')
+        'issued under different probe suites, so a difference may reflect a change '
+        'in method rather than a change in the model. Only metrics present in both '
+        'are shown.</div>')
 
     def head(p, label):
         d = _dt.datetime.utcfromtimestamp(p["created_at"]).strftime("%Y-%m-%d %H:%M UTC")
@@ -1529,15 +727,15 @@ def compare_html(a: dict, b: dict) -> str:
 <header class="mast">
   <div class="mast-top"><span class="brand">Orqen</span>
     <span class="doctype">Measurement comparison</span></div>
-  <h1 class="specimen" style="font-size:1.5rem">Change in measured behaviour</h1>
+  <h1 class="specimen" style="font-size:var(--text-2xl)">Change in measured behaviour</h1>
 </header>
 <dl class="kv">{head(a, "Earlier")}{head(b, "Later")}</dl>
 <section class="sec">
   <h2><span class="clause">&sect;1</span> Per-axis change</h2>
   {warn}
-  <p class="lede">Every metric is oriented so that higher is worse, so an
-    increase is a regression on any axis. Differences smaller than the spread
-    reported on either passport are not evidence of change.</p>
+  <p class="lede">Every metric is oriented so that higher is worse, so an increase
+    is a regression on any axis. Differences smaller than the spread reported on
+    either passport are not evidence of change.</p>
   <table class="cmp">
     <thead><tr><th>Measurement</th><th>Earlier</th><th>Later</th><th>Change</th></tr></thead>
     <tbody>{''.join(rows) or '<tr><td colspan="4">No shared metrics.</td></tr>'}</tbody>
@@ -1546,20 +744,7 @@ def compare_html(a: dict, b: dict) -> str:
 <footer class="control">
   <span>Orqen &middot; empirical AI bill of materials</span>
   <span><a href="/p/{e(a['slug'])}">earlier passport</a> &middot;
-        <a href="/p/{e(b['slug'])}">later passport</a></span>
+        <a href="/p/{e(b['slug'])}">later passport</a> &middot;
+        <a href="/fleet">fleet</a></span>
 </footer>
 </main>""", "Change in measured behaviour between two Orqen passports.")
-
-
-def error_html(code: int, message: str) -> str:
-    return _shell(
-        f"Orqen · {code}",
-        f"""<main class="sheet"><section class="hero">
-<span class="brand">Orqen</span>
-<h1>{code}</h1>
-<p class="claim">{e(message)}</p>
-<form class="audit" method="post" action="/audit">
-  <input name="model_id" required placeholder="org/model" spellcheck="false">
-  <button type="submit">Issue passport</button>
-</form>
-</section></main>""")

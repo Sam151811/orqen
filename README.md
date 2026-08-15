@@ -224,6 +224,48 @@ OpenAI-compatible gateway to probe a real model.
 Exit code 1 on any red finding. A model bump that regresses fairness fails the
 build.
 
+## One system, two registers
+
+`orqen/ui.py` is the application, `orqen/render.py` the documents it issues. They
+share one palette and one type system - monochrome, IBM Plex Mono for data and
+labels, Plex Sans for prose. An earlier version put the certificate on pale stock
+with two extra type families; three families across two pages read as two
+templates rather than one product, so the certificate was ported.
+
+What separates the registers now is structure, not brightness:
+
+| | Application | Document |
+|---|---|---|
+| Background | point field, mouse parallax | none |
+| Motion | scroll reveal, live clock | none |
+| Script | interaction and scene | none at all |
+| Measure | full width, 1440px | 64rem, single column |
+| Structure | tiles and tables | numbered clauses, document control |
+| Print | not designed for it | **inverts to white paper** |
+
+That last row is the honest reason a document still needs to differ. A compliance
+artefact gets attached to a review pack, and a full-bleed black page is both
+unreadable on paper and an ink cartridge. Everything inverts under `@media print`.
+
+Severity is never carried by hue, since there is none: the determination is spelled
+out in words - PASS, REVIEW, NO CALL, FAIL, INCONCLUSIVE - and weight and tone
+reinforce it.
+
+## The fleet view
+
+`/fleet` is the index that did not exist &mdash; until it was added, a passport was
+unreachable unless you already knew its slug. One row per model showing its most
+recent passport, so re-auditing replaces a row rather than appending one: the page
+is the current state of the estate, not a log.
+
+The four tiles are each one graded metric plotted across every audited model,
+sorted ascending, with the pass limit drawn as a dashed rule. The shape above the
+rule is how much of the estate is out of specification on that axis.
+
+Rows are server-rendered *and* embedded as JSON, so the table is complete and
+readable with JavaScript switched off, and sorting and filtering are instant when
+it is on.
+
 ## The passport
 
 Server-rendered HTML at a permanent public URL. No client framework, no

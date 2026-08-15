@@ -16,15 +16,17 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import (HTMLResponse, JSONResponse, RedirectResponse,
+                               Response)
 from pydantic import BaseModel
 
 from . import attest, config, standards
 from .incidents import corpus
 from .pipeline import run
 from .providers import AuthError, ModelUnavailable, ProviderError
-from .render import (compare_html, error_html, landing_html,
-                     passport_html, standards_html)
+from .render import compare_html, passport_html, standards_html
+from .ui import (FAVICON, MANIFEST, error_html, fleet_html, fleet_stats,
+                 landing_html)
 from .store import open_store
 
 @asynccontextmanager
@@ -129,19 +131,75 @@ def _audit(model_id: str):
 
 
 # --- HTML --------------------------------------------------------------------
+RANGES = [("24H", "24h"), ("7D", "7d"), ("30D", "30d"), ("ALL", "All")]
+RANGE_SECONDS = {"24H": 86400, "7D": 604800, "30D": 2592000}
+RANGE_LABEL = {"24H": "Last 24 hours", "7D": "Last 7 days",
+               "30D": "Last 30 days", "ALL": "All time"}
+
+
+def _estate() -> dict:
+    """Cheap enough to run on every landing render, and it fails soft: a
+    database hiccup should cost the counters, not the page."""
+    try:
+        rows = open_store().list_passports(limit=300)
+        st = fleet_stats(rows)
+        return {"models": st["models"], "passports": st["passports"],
+                "suite": config.PROBE_SUITE_VERSION}
+    except Exception:  # noqa: BLE001
+        return {"suite": config.PROBE_SUITE_VERSION}
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
-    return HTMLResponse(landing_html())
+    return HTMLResponse(landing_html(stats=_estate()))
+
+
+@app.get("/fleet", response_class=HTMLResponse)
+def fleet(range: str = "ALL"):
+    """The index that did not exist: until now a passport was unreachable unless
+    you already knew its slug."""
+    key = range if range in RANGE_LABEL else "ALL"
+    since = (time.time() - RANGE_SECONDS[key]) if key in RANGE_SECONDS else None
+    rows = open_store().list_passports(limit=300, since=since)
+    return HTMLResponse(fleet_html(rows, RANGE_LABEL[key], RANGES, key))
+
+
+@app.get("/api/fleet")
+def fleet_json(range: str = "ALL"):
+    key = range if range in RANGE_LABEL else "ALL"
+    since = (time.time() - RANGE_SECONDS[key]) if key in RANGE_SECONDS else None
+    rows = open_store().list_passports(limit=300, since=since)
+    st = fleet_stats(rows)
+    return {"range": key, "models": st["models"], "passports": st["passports"],
+            "mean_coverage": round(st["mean_coverage"], 4),
+            "with_red": st["with_red"],
+            "entries": [{"slug": m["slug"], "model_id": m["model_id"],
+                         "created_at": m["created_at"],
+                         "overall": (m.get("scores") or {}).get("overall"),
+                         "coverage": (m.get("scores") or {}).get("coverage"),
+                         "digest": (m.get("fingerprint") or {}).get("digest")}
+                        for m in st["latest"]]}
+
+
+@app.get("/favicon.svg")
+def favicon():
+    return Response(FAVICON, media_type="image/svg+xml",
+                    headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.get("/site.webmanifest")
+def manifest():
+    return JSONResponse(MANIFEST, media_type="application/manifest+json")
 
 
 @app.post("/audit")
 def audit_form(request: Request, model_id: str = Form(...)):
     ok, msg = _rate_check(_client_key(request))
     if not ok:
-        return HTMLResponse(landing_html(error=msg), status_code=429)
+        return HTMLResponse(landing_html(error=msg, stats=_estate()), status_code=429)
     p, err = _audit(model_id.strip())
     if err:
-        return HTMLResponse(landing_html(error=err), status_code=400)
+        return HTMLResponse(landing_html(error=err, stats=_estate()), status_code=400)
     return RedirectResponse(f"/p/{p['slug']}", status_code=303)
 
 
@@ -149,10 +207,10 @@ def audit_form(request: Request, model_id: str = Form(...)):
 def audit_link(request: Request, model_id: str = ""):
     ok, msg = _rate_check(_client_key(request))
     if not ok:
-        return HTMLResponse(landing_html(error=msg), status_code=429)
+        return HTMLResponse(landing_html(error=msg, stats=_estate()), status_code=429)
     p, err = _audit(model_id.strip())
     if err:
-        return HTMLResponse(landing_html(error=err), status_code=400)
+        return HTMLResponse(landing_html(error=err, stats=_estate()), status_code=400)
     return RedirectResponse(f"/p/{p['slug']}", status_code=303)
 
 
