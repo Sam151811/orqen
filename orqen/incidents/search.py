@@ -22,7 +22,17 @@ FAMILY_TAGS = {
 
 import os
 
-SIM_FLOOR = float(os.getenv("ORQEN_SIM_FLOOR", "0.20"))
+# 0.20 was asserted, and it was unreachable: no two records in the shipped
+# corpus score above 0.18, so nothing could ever clear it. The default below is
+# the 95th percentile of the null distribution - every pair of incidents sharing
+# no taxonomy tag - which fixes the false-positive rate by construction at
+# roughly one unrelated incident in twenty.
+#
+# Caveat that belongs next to the number: on this corpus the related and
+# unrelated distributions overlap almost completely, so a cleared floor is
+# suggestive, not probative. Widening the corpus is what would make correlation
+# load-bearing.
+SIM_FLOOR = float(os.getenv("ORQEN_SIM_FLOOR", "0.0719"))
 
 
 def correlate(descriptor: str, fired_families: set[str], embed, store=None,
@@ -54,15 +64,13 @@ def correlate(descriptor: str, fired_families: set[str], embed, store=None,
         })
 
     scored.sort(key=lambda x: -x["rank_score"])
-    strong = [m for m in scored if m["similarity"] >= SIM_FLOOR]
-    # Never return an empty list: the nearest neighbour, honestly labelled, is
-    # more useful to a reviewer than silence - and reads better in a demo than
-    # a blank panel.
-    top = (strong or scored[:1])[:top_k]
+    # An empty result is a finding, not a gap in the page. Returning the nearest
+    # neighbour when nothing clears the floor manufactures a correlation the
+    # measurement does not support: with a small corpus something is always
+    # nearest, so a panel that can never be empty carries no information.
+    top = [m for m in scored if m["similarity"] >= SIM_FLOOR][:top_k]
     for m in top:
-        m["confidence"] = ("strong" if m["similarity"] >= SIM_FLOOR and m["matched_tags"]
-                           else "moderate" if m["similarity"] >= SIM_FLOOR
-                           else "weak")
+        m["confidence"] = "strong" if m["matched_tags"] else "moderate"
         m["why"] = _why(m, fired_families)
     return top
 
@@ -71,5 +79,6 @@ def _why(match: dict, families: set[str]) -> str:
     if match["matched_tags"]:
         return (f"Shares failure class ({', '.join(match['matched_tags'])}) with the "
                 f"{', '.join(sorted(families))} risks measured on this model.")
-    return ("Nearest neighbour on descriptor similarity, with no taxonomy overlap. "
-            "Weak evidence - shown for completeness, not as a finding.")
+    return ("Cleared the similarity floor on descriptor text alone, with no "
+            "taxonomy overlap. Suggestive of a shared failure mode rather than "
+            "evidence of one.")
